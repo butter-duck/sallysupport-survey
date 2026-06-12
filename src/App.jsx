@@ -70,10 +70,28 @@ async function sbFetch(path, options = {}) {
 }
 
 async function loadResponses() {
+  // Local fallback data (used when Supabase is unreachable)
+  function getLocalFallback() {
+    try {
+      const raw = localStorage.getItem("ss_fallback");
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
   try {
     const rows = await sbFetch("/rest/v1/responses?select=id,data&order=data->>ts.asc");
-    return rows.map(r => ({ id: r.id, ...r.data }));
-  } catch(e) { console.error("loadResponses:", e); return []; }
+    const remote = rows.map(r => ({ id: r.id, ...r.data }));
+    // Merge any local-only entries not yet in remote
+    const remoteIds = new Set(remote.map(r => r.id));
+    const local = getLocalFallback().filter(r => !remoteIds.has(r.id));
+    return [...remote, ...local];
+  } catch(e) {
+    console.warn("Supabase unavailable, using localStorage:", e.message);
+    // Merge DUMMY_SEED with any locally submitted responses
+    const local = getLocalFallback();
+    const localIds = new Set(local.map(r => r.id));
+    const seed = DUMMY_SEED.filter(r => !localIds.has(r.id));
+    return [...seed, ...local];
+  }
 }
 
 async function addResponse(response) {
@@ -83,7 +101,16 @@ async function addResponse(response) {
       prefer: "return=minimal",
       body: JSON.stringify({ id: response.id, data: response }),
     });
-  } catch(e) { console.error("addResponse:", e); }
+  } catch(e) {
+    // Supabase unavailable (e.g. sandbox) — fall back to localStorage
+    console.warn("Supabase unavailable, using localStorage:", e.message);
+    try {
+      const raw = localStorage.getItem("ss_fallback") || "[]";
+      const arr = JSON.parse(raw);
+      arr.push(response);
+      localStorage.setItem("ss_fallback", JSON.stringify(arr));
+    } catch(le) { console.error("localStorage fallback failed:", le); }
+  }
 }
 
 async function updateResponse(response) {
@@ -112,7 +139,13 @@ async function countResponses() {
     });
     const count = res.headers.get("content-range");
     return count ? parseInt(count.split("/")[1]) : 0;
-  } catch { return 0; }
+  } catch {
+    // Fall back to local count
+    try {
+      const raw = localStorage.getItem("ss_fallback");
+      return raw ? JSON.parse(raw).length : 0;
+    } catch { return 0; }
+  }
 }
 
 // Seed dummy data into Supabase if the table is empty
@@ -124,7 +157,10 @@ async function seedIfEmpty() {
         await addResponse(r);
       }
     }
-  } catch(e) { console.error("seed:", e); }
+  } catch(e) {
+    // Supabase down — DUMMY_SEED is merged in loadResponses fallback automatically
+    console.warn("seedIfEmpty skipped:", e.message);
+  }
 }
 
 function genToken() {
@@ -401,9 +437,9 @@ function Survey({ onComplete }) {
     ()=>true,
   ][step-1]?.();
 
-  function next() {
+  async function next() {
     if(step<TOTAL) setStep(s=>s+1);
-    else submit();
+    else await submit();
   }
   function back() { setStep(s=>s-1); }
 
@@ -418,8 +454,7 @@ function Survey({ onComplete }) {
       q5: {...q5}, q5Other,
       q6: {...q6},
     };
-    const existing = loadResponses();
-    saveResponses([...existing, response]);
+    await addResponse(response);
     localStorage.setItem(TOKEN_KEY, token);
     onComplete(token);
   }
