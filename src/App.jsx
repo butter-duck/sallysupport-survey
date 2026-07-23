@@ -2536,6 +2536,9 @@ function Dashboard({ onBack, responses, customFindings }) {
               name: role,
               value: filtered.filter(r=>r.q13===role).length
             })).filter(d=>d.value>0);
+            if (!turnoverData.length) return (
+              <p style={{color:B.gray400,fontSize:14}}>No turnover data yet for selected filters.</p>
+            );
             return (
               <ResponsiveContainer width="100%" height={290}>
                 <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
