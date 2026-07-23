@@ -275,10 +275,10 @@ function Header({ right }) {
   );
 }
 
-function Btn({ onClick, children, secondary, small, style={} }) {
+function Btn({ onClick, children, secondary, small, cta, style={} }) {
   const base = {
-    background: secondary ? B.white : B.navy,
-    color: secondary ? B.navy : B.white,
+    background: secondary ? B.white : cta ? B.accent : B.navy,
+    color: secondary ? B.navy : cta ? B.navy : B.white,
     border: secondary ? `1.5px solid ${B.navy}` : "none",
     borderRadius: 8,
     padding: small ? "8px 18px" : "12px 28px",
@@ -303,7 +303,7 @@ function ProgressBar({ step, total }) {
         <span>{pct}% complete</span>
       </div>
       <div style={{height:5,background:B.gray100,borderRadius:99}}>
-        <div style={{height:"100%",width:`${pct}%`,background:B.teal,borderRadius:99,
+        <div style={{height:"100%",width:`${pct}%`,background:B.accent,borderRadius:99,
           transition:"width .3s ease"}} />
       </div>
     </div>
@@ -319,7 +319,7 @@ function SurveyShell({ children, step, total, onNext, onBack, nextLabel="Continu
         {children}
         <div style={{display:"flex",gap:12,marginTop:32,justifyContent:"flex-end"}}>
           {step > 1 && <Btn secondary onClick={onBack}>Back</Btn>}
-          <Btn onClick={onNext} style={{opacity:nextDisabled?.5:1,pointerEvents:nextDisabled?"none":"auto"}}>
+          <Btn cta onClick={onNext} style={{opacity:nextDisabled?.5:1,pointerEvents:nextDisabled?"none":"auto"}}>
             {nextLabel}
           </Btn>
         </div>
@@ -850,11 +850,11 @@ function Welcome({ onStart, onAdmin }) {
           ].map(item=>(
             <div key={item} style={{display:"flex",alignItems:"center",gap:10,
               fontSize:14,color:B.gray600,marginBottom:8}}>
-              <span style={{color:B.teal,fontWeight:700}}>✓</span>{item}
+              <span style={{color:B.accent,fontWeight:700}}>✓</span>{item}
             </div>
           ))}
         </div>
-        <Btn onClick={onStart} style={{fontSize:16,padding:"15px 40px"}}>
+        <Btn cta onClick={onStart} style={{fontSize:16,padding:"15px 40px"}}>
           Start the survey →
         </Btn>
         <PartnerStrip />
@@ -882,8 +882,8 @@ function ThankYou({ token, onDashboard }) {
     <div style={{minHeight:"100vh",background:B.gray50}}>
       <Header />
       <div style={{maxWidth:560,margin:"0 auto",padding:"64px 20px",textAlign:"center"}}>
-        <div style={{width:64,height:64,background:B.tealLight,borderRadius:"50%",
-          display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 24px",fontSize:28}}>
+        <div style={{width:64,height:64,background:B.accentLight,borderRadius:"50%",
+          display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 24px",fontSize:28,color:B.accent}}>
           ✓
         </div>
         <h1 style={{fontSize:28,fontWeight:700,color:B.navy,marginBottom:12}}>Thanks for responding!</h1>
@@ -900,7 +900,7 @@ function ThankYou({ token, onDashboard }) {
             <Btn small secondary onClick={copy}>{copied?"Copied!":"Copy"}</Btn>
           </div>
         </div>
-        <Btn onClick={onDashboard} style={{fontSize:16,padding:"14px 36px"}}>
+        <Btn cta onClick={onDashboard} style={{fontSize:16,padding:"14px 36px"}}>
           View the dashboard →
         </Btn>
       </div>
@@ -932,7 +932,7 @@ function ReturningUser({ onValid, onTakeSurvey }) {
             borderRadius:8,marginBottom:12,boxSizing:"border-box"}} />
         {err && <p style={{fontSize:14,color:"#C0392B",marginBottom:12}}>{err}</p>}
         <div style={{display:"flex",gap:12,justifyContent:"center"}}>
-          <Btn onClick={check}>Access dashboard</Btn>
+          <Btn cta onClick={check}>Access dashboard</Btn>
           <Btn secondary onClick={onTakeSurvey}>Take the survey</Btn>
         </div>
       </div>
@@ -2213,7 +2213,7 @@ function CalendlyCTA({ embed = true }) {
           style={{minWidth:280,height:630}} />
       ) : (
         <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer"
-          style={{display:"inline-block",background:B.navy,color:B.white,borderRadius:8,
+          style={{display:"inline-block",background:B.accent,color:B.navy,borderRadius:8,
             padding:"12px 28px",fontSize:15,fontWeight:600,textDecoration:"none"}}>
           Book a free consultation →
         </a>
@@ -2319,7 +2319,7 @@ function Dashboard({ onBack, responses, customFindings }) {
         <KeyFindings responses={responses} customFindings={customFindings} />
 
         {/* Section 1 */}
-        <div style={{fontSize:11,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+        <div style={{fontSize:15,fontWeight:600,color:B.gray400,letterSpacing:"1px",
           textTransform:"uppercase",marginBottom:16,marginTop:8,
           paddingBottom:8,borderBottom:`1px solid ${B.gray200}`}}>Who responded</div>
 
@@ -2406,7 +2406,7 @@ function Dashboard({ onBack, responses, customFindings }) {
         <CalendlyCTA embed={false} />
 
         {/* Section 2 */}
-        <div style={{fontSize:11,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+        <div style={{fontSize:15,fontWeight:600,color:B.gray400,letterSpacing:"1px",
           textTransform:"uppercase",marginBottom:16,marginTop:8,
           paddingBottom:8,borderBottom:`1px solid ${B.gray200}`}}>How agencies are structured today</div>
 
@@ -2615,7 +2615,7 @@ function Dashboard({ onBack, responses, customFindings }) {
         </div>
 
         {/* Section 3 */}
-        <div style={{fontSize:11,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+        <div style={{fontSize:15,fontWeight:600,color:B.gray400,letterSpacing:"1px",
           textTransform:"uppercase",marginBottom:16,marginTop:8,
           paddingBottom:8,borderBottom:`1px solid ${B.gray200}`}}>How agencies grow</div>
 
