@@ -2184,14 +2184,15 @@ function NCount({ n, filtered, label="responses" }) {
 const CALENDLY_URL = "https://calendly.com/sallysupport/back-office-capacity-assessment";
 const CALENDLY_SCRIPT_SRC = "https://assets.calendly.com/assets/external/widget.js";
 
-function CalendlyCTA() {
+function CalendlyCTA({ embed = true }) {
   useEffect(() => {
+    if (!embed) return;
     if (document.querySelector(`script[src="${CALENDLY_SCRIPT_SRC}"]`)) return;
     const script = document.createElement("script");
     script.src = CALENDLY_SCRIPT_SRC;
     script.async = true;
     document.body.appendChild(script);
-  }, []);
+  }, [embed]);
 
   return (
     <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
@@ -2199,11 +2200,19 @@ function CalendlyCTA() {
       <h3 style={{fontSize:20,fontWeight:700,color:B.navy,marginBottom:8}}>
         Want expert help planning your next hires as your agency scales?
       </h3>
-      <p style={{fontSize:15,color:B.gray600,marginBottom:20,lineHeight:1.6}}>
+      <p style={{fontSize:15,color:B.gray600,marginBottom:embed?20:22,lineHeight:1.6}}>
         Get a free consultation with the office staffing experts at SallySupport.
       </p>
-      <div className="calendly-inline-widget" data-url={CALENDLY_URL}
-        style={{minWidth:280,height:630}} />
+      {embed ? (
+        <div className="calendly-inline-widget" data-url={CALENDLY_URL}
+          style={{minWidth:280,height:630}} />
+      ) : (
+        <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer"
+          style={{display:"inline-block",background:B.navy,color:B.white,borderRadius:8,
+            padding:"12px 28px",fontSize:15,fontWeight:600,textDecoration:"none"}}>
+          Book a free consultation →
+        </a>
+      )}
     </div>
   );
 }
@@ -2304,7 +2313,7 @@ function Dashboard({ onBack, responses, customFindings }) {
           </p>
         </div>
 
-        <CalendlyCTA />
+        <CalendlyCTA embed={false} />
 
         <KeyFindings responses={responses} customFindings={customFindings} />
 
