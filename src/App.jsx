@@ -1,6 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import * as d3 from "d3";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList } from "recharts";
+import sallysupportLogo from "./assets/partners/sallysupport-logo.png";
+import reelHomeCareLogo from "./assets/partners/reel-home-care.webp";
+import homeCareStrategyLabLogo from "./assets/partners/home-care-strategy-lab.svg";
+import momentumLogo from "./assets/partners/momentum.png";
+import simitreeLogo from "./assets/partners/simitree.svg";
 
 // ─── Brand tokens ───────────────────────────────────────────────
 const B = {
@@ -45,8 +50,9 @@ const MARKET_TYPES = ["Urban","Rural","Mixed"];
 const TIME_TO_FIRST_HIRE = ["Less than 6 months","6–12 months","1–2 years","2–3 years","More than 3 years","Have not yet hired"];
 
 // ─── Partners ────────────────────────────────────────────────────
-// logo: hotlinked from the partner's own site where a direct file exists.
-//       Partners with inline-SVG logos fall back to a styled wordmark.
+// logo: bundled locally from src/assets/partners (see imports above) so
+//       rendering doesn't depend on the partner's site staying up/unchanged.
+//       Partners without a usable source file fall back to a styled wordmark.
 // darkBg: true when the logo art is white and needs a dark tile behind it.
 const PARTNERS = [
   {
@@ -57,7 +63,7 @@ const PARTNERS = [
   },
   {
     name: "Reel Home Care Consulting",
-    logo: "https://reelhomecareconsulting.com/wp-content/uploads/2024/12/logo-rhcc.webp",
+    logo: reelHomeCareLogo,
     url: "https://reelhomecareconsulting.com",
     blurb: "Founded by a former #1-rated agency owner, helping home care operators build profitable agencies without burning out.",
   },
@@ -69,20 +75,20 @@ const PARTNERS = [
   },
   {
     name: "Home Care Strategy Lab",
-    logo: "https://cdn.prod.website-files.com/67df0505a659780f71f825f3/67e054d3d7e9762ca9ac1108_logo.svg",
+    logo: homeCareStrategyLabLogo,
     url: "https://www.homecarestrategylab.com",
     blurb: "A podcast and community putting high-growth home care agencies under the microscope to find what actually works.",
   },
   {
     name: "Momentum HC & Technology Consulting",
-    logo: "https://images.squarespace-cdn.com/content/v1/69125466199a1854fdb638b4/43a45906-23f9-40f6-be9f-8c1ca1186e6f/Momentum+White+Logo.png?format=750w",
+    logo: momentumLogo,
     darkBg: true,
     url: "https://www.momentumhtconsulting.com",
     blurb: "Independent advisory firm helping care-at-home providers align strategy, operations, and technology to scale.",
   },
   {
     name: "SimiTree",
-    logo: "https://simitreehc.com/packages/worx/themes/worx/images/logo.svg",
+    logo: simitreeLogo,
     url: "https://simitreehc.com",
     blurb: "Post-acute consulting, revenue cycle management, coding, and analytics for home health, hospice, and behavioral health.",
   },
@@ -249,9 +255,8 @@ function Logo() {
     <a href="https://sallysupport.com/?utm_source=benchmark_report&utm_medium=survey&utm_campaign=staffing_benchmark"
       target="_blank" rel="noopener noreferrer"
       style={{display:"flex",alignItems:"center",textDecoration:"none"}}>
-      <img src="https://sallysupport.com/wp-content/uploads/2024/09/logo.png"
-        alt="SallySupport" style={{height:40,objectFit:"contain"}}
-        onError={e=>e.target.style.display="none"} />
+      <img src={sallysupportLogo}
+        alt="SallySupport" style={{height:40,objectFit:"contain"}} />
     </a>
   );
 }
