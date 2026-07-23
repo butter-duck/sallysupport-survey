@@ -2180,6 +2180,34 @@ function NCount({ n, filtered, label="responses" }) {
   );
 }
 
+// ─── Consultation CTA (Calendly) ──────────────────────────────────
+const CALENDLY_URL = "https://calendly.com/sallysupport/back-office-capacity-assessment";
+const CALENDLY_SCRIPT_SRC = "https://assets.calendly.com/assets/external/widget.js";
+
+function CalendlyCTA() {
+  useEffect(() => {
+    if (document.querySelector(`script[src="${CALENDLY_SCRIPT_SRC}"]`)) return;
+    const script = document.createElement("script");
+    script.src = CALENDLY_SCRIPT_SRC;
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+  return (
+    <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
+      padding:"28px 24px",marginBottom:48,textAlign:"center"}}>
+      <h3 style={{fontSize:20,fontWeight:700,color:B.navy,marginBottom:8}}>
+        Want expert help planning your next hires as your agency scales?
+      </h3>
+      <p style={{fontSize:15,color:B.gray600,marginBottom:20,lineHeight:1.6}}>
+        Get a free consultation with the office staffing experts at SallySupport.
+      </p>
+      <div className="calendly-inline-widget" data-url={CALENDLY_URL}
+        style={{minWidth:280,height:630}} />
+    </div>
+  );
+}
+
 // ─── Dashboard ───────────────────────────────────────────────────
 function Dashboard({ onBack, responses, customFindings }) {
   const [filters,setFilters] = useState({agencyType:"",payer:"",location:"",market:""});
@@ -2275,6 +2303,8 @@ function Dashboard({ onBack, responses, customFindings }) {
             Updated in real time as new agencies participate.
           </p>
         </div>
+
+        <CalendlyCTA />
 
         <KeyFindings responses={responses} customFindings={customFindings} />
 
@@ -2605,6 +2635,8 @@ function Dashboard({ onBack, responses, customFindings }) {
         </div>
 
         {/* Hiring flow % chart */}
+
+        <CalendlyCTA />
 
         <PartnerSection />
 
