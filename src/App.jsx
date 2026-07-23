@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import * as d3 from "d3";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList } from "recharts";
-import sallysupportLogo from "./assets/partners/sallysupport-logo.png";
+import sallysupportLogo from "./assets/sallysupport-logo.png";
 import reelHomeCareLogo from "./assets/partners/reel-home-care.webp";
 import homeCareStrategyLabLogo from "./assets/partners/home-care-strategy-lab.svg";
 import momentumLogo from "./assets/partners/momentum.png";
@@ -76,6 +76,7 @@ const PARTNERS = [
   {
     name: "Home Care Strategy Lab",
     logo: homeCareStrategyLabLogo,
+    darkBg: true,
     url: "https://www.homecarestrategylab.com",
     blurb: "A podcast and community putting high-growth home care agencies under the microscope to find what actually works.",
   },
@@ -89,6 +90,7 @@ const PARTNERS = [
   {
     name: "SimiTree",
     logo: simitreeLogo,
+    darkBg: true,
     url: "https://simitreehc.com",
     blurb: "Post-acute consulting, revenue cycle management, coding, and analytics for home health, hospice, and behavioral health.",
   },
@@ -319,7 +321,6 @@ function SurveyShell({ children, step, total, onNext, onBack, nextLabel="Continu
             {nextLabel}
           </Btn>
         </div>
-        <PartnerStrip />
       </div>
     </div>
   );
@@ -854,7 +855,8 @@ function Welcome({ onStart, onAdmin }) {
         <Btn onClick={onStart} style={{fontSize:16,padding:"15px 40px"}}>
           Start the survey →
         </Btn>
-        <div style={{marginTop:48,paddingTop:20,borderTop:`1px solid ${B.gray200}`}}>
+        <PartnerStrip />
+        <div style={{marginTop:20,paddingTop:20,borderTop:`1px solid ${B.gray200}`}}>
           <button onClick={onAdmin} style={{background:"none",border:"none",
             fontSize:12,color:B.gray400,cursor:"pointer",padding:0}}
             onMouseEnter={e=>e.target.style.color=B.gray600}
