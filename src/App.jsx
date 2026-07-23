@@ -43,12 +43,56 @@ const AGENCY_TYPES = ["Franchise network","Independent","Other"];
 const PAYER_SOURCES = ["Private pay","Medicaid","Long-term care insurance","Veterans Affairs","Other"];
 const MARKET_TYPES = ["Urban","Rural","Mixed"];
 const TIME_TO_FIRST_HIRE = ["Less than 6 months","6–12 months","1–2 years","2–3 years","More than 3 years","Have not yet hired"];
+
+// ─── Partners ────────────────────────────────────────────────────
+// logo: hotlinked from the partner's own site where a direct file exists.
+//       Partners with inline-SVG logos fall back to a styled wordmark.
+// darkBg: true when the logo art is white and needs a dark tile behind it.
+const PARTNERS = [
+  {
+    name: "Vitable Health",
+    logo: null,
+    url: "https://www.vitablehealth.com",
+    blurb: "Health benefits built for hourly and caregiving workforces, with primary care at the center of every plan.",
+  },
+  {
+    name: "Reel Home Care Consulting",
+    logo: "https://reelhomecareconsulting.com/wp-content/uploads/2024/12/logo-rhcc.webp",
+    url: "https://reelhomecareconsulting.com",
+    blurb: "Founded by a former #1-rated agency owner, helping home care operators build profitable agencies without burning out.",
+  },
+  {
+    name: "Briones Consulting Group",
+    logo: null,
+    url: "https://thebrionesgroup.com",
+    blurb: "Senior care growth strategists guiding private-pay agency owners through scaling, operations, and exit planning.",
+  },
+  {
+    name: "Home Care Strategy Lab",
+    logo: "https://cdn.prod.website-files.com/67df0505a659780f71f825f3/67e054d3d7e9762ca9ac1108_logo.svg",
+    url: "https://www.homecarestrategylab.com",
+    blurb: "A podcast and community putting high-growth home care agencies under the microscope to find what actually works.",
+  },
+  {
+    name: "Momentum HC & Technology Consulting",
+    logo: "https://images.squarespace-cdn.com/content/v1/69125466199a1854fdb638b4/43a45906-23f9-40f6-be9f-8c1ca1186e6f/Momentum+White+Logo.png?format=750w",
+    darkBg: true,
+    url: "https://www.momentumhtconsulting.com",
+    blurb: "Independent advisory firm helping care-at-home providers align strategy, operations, and technology to scale.",
+  },
+  {
+    name: "SimiTree",
+    logo: "https://simitreehc.com/packages/worx/themes/worx/images/logo.svg",
+    url: "https://simitreehc.com",
+    blurb: "Post-acute consulting, revenue cycle management, coding, and analytics for home health, hospice, and behavioral health.",
+  },
+];
 const OFFICE_ROLES = ["Sales/marketing","Executive assistant/reception","Scheduling/care coordination","Billing","HR/Recruitment","Field supervisor"];
 
 const PIE_COLORS = ["#1A2B4A","#2ABFAA","#F4A623","#6C7EAA","#A8D5CE","#F7C97A","#8B9DC3"];
 
 // ─── Dummy seed data (preview only — full data lives in Supabase) ─
-const DUMMY_SEED = [{"id": "x1945nq45347", "ts": 1781589915144, "q1": "Virginia", "q2": "0\u2013500", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "1", "Billing": "1"}, "q8": "2\u20133 years", "q9": "Urban", "q10": "Field supervisor", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false}, {"id": "vg0fn9xua608", "ts": 1780240251661, "q1": "New Jersey", "q2": "0\u2013500", "q3": "Franchise network", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "2"}, "q8": "2\u20133 years", "q9": "Mixed", "q10": "Executive assistant/reception", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false}, {"id": "r7tcs4cc786c", "ts": 1781734202799, "q1": "Kansas", "q2": "501\u20131,000", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Hybrid", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "1", "Scheduling/care coordination": "1", "Billing": "1"}, "q8": "6\u201312 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "Yes", "q11Positions": ["Sales/marketing"], "q12Email": "", "q12Consent": false}, {"id": "bcxuljyl87fe", "ts": 1781699887270, "q1": "Kentucky", "q2": "501\u20131,000", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "3"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false}, {"id": "q2y9v86wda7d", "ts": 1782353092123, "q1": "Delaware", "q2": "1,001\u20131,500", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "Sales/marketing": 4}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Full-time", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Sales/marketing": "1", "Executive assistant/reception": "1", "Scheduling/care coordination": "4", "Billing": "1"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Field supervisor", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false}, {"id": "14j1ripz780f", "ts": 1781167007513, "q1": "Texas", "q2": "1,001\u20131,500", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Executive assistant/reception": 2}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Hybrid", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "1", "Scheduling/care coordination": "1"}, "q8": "Less than 6 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false}, {"id": "xfgcaqvk7684", "ts": 1781237401063, "q1": "South Dakota", "q2": "1,501\u20132,000", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Part-time", "Scheduling/care coordination": "Full-time", "Billing": "Part-time", "HR/Recruitment": "Part-time", "Field supervisor": "Full-time"}, "q7": {"Executive assistant/reception": "2", "Scheduling/care coordination": "2", "Billing": "5", "HR/Recruitment": "5", "Field supervisor": "1"}, "q8": "Less than 6 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false}, {"id": "2wx7ptx648d3", "ts": 1780306702926, "q1": "Delaware", "q2": "1,501\u20132,000", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Executive assistant/reception": 2, "Field supervisor": 3}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Full-time"}, "q7": {"Executive assistant/reception": "5", "Scheduling/care coordination": "2", "Field supervisor": "5"}, "q8": "6\u201312 months", "q9": "Mixed", "q10": "Billing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false}, {"id": "lvxwqzxe1737", "ts": 1780159824875, "q1": "Rhode Island", "q2": "2,001\u20132,500", "q3": "Independent", "q4": "Private pay", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "HR/Recruitment": 3, "Sales/marketing": 4}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Not applicable"}, "q7": {"Sales/marketing": "4", "Scheduling/care coordination": "2", "Billing": "4", "HR/Recruitment": "5"}, "q8": "Less than 6 months", "q9": "Rural", "q10": "Executive assistant/reception", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false}, {"id": "nn8ztv0532b2", "ts": 1782101729519, "q1": "New Hampshire", "q2": "2,001\u20132,500", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Full-time", "HR/Recruitment": "Part-time", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "3", "Scheduling/care coordination": "7", "Billing": "7", "HR/Recruitment": "1"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Field supervisor", "q11": "Yes", "q11Positions": ["Executive assistant/reception"], "q12Email": "", "q12Consent": false}, {"id": "7lxxezdua82e", "ts": 1780548870021, "q1": "Oklahoma", "q2": "2,501\u20133,000", "q3": "Franchise network", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Hybrid", "Executive assistant/reception": "Part-time", "Scheduling/care coordination": "Hybrid", "Billing": "Full-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Part-time"}, "q7": {"Sales/marketing": "3", "Executive assistant/reception": "7", "Scheduling/care coordination": "6", "Billing": "5", "HR/Recruitment": "3", "Field supervisor": "4"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Scheduling/care coordination", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false}, {"id": "l8m1g9fk33c8", "ts": 1782180510715, "q1": "Wisconsin", "q2": "2,501\u20133,000", "q3": "Franchise network", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "HR/Recruitment": 3, "Field supervisor": 4}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Hybrid", "HR/Recruitment": "Full-time", "Field supervisor": "Part-time"}, "q7": {"Scheduling/care coordination": "6", "Billing": "2", "HR/Recruitment": "2", "Field supervisor": "7"}, "q8": "6\u201312 months", "q9": "Rural", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false}, {"id": "v4ykadejbb47", "ts": 1781731963069, "q1": "Washington", "q2": "3,001+", "q3": "Franchise network", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Full-time", "Field supervisor": "Full-time"}, "q7": {"Sales/marketing": "2", "Executive assistant/reception": "6", "Scheduling/care coordination": "6", "Billing": "10", "HR/Recruitment": "5", "Field supervisor": "1"}, "q8": "Less than 6 months", "q9": "Mixed", "q10": "HR/Recruitment", "q11": "Yes", "q11Positions": ["Sales/marketing", "Executive assistant/reception"], "q12Email": "", "q12Consent": false}, {"id": "knqt3wve3180", "ts": 1781691803583, "q1": "West Virginia", "q2": "3,001+", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Part-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Hybrid"}, "q7": {"Sales/marketing": "12", "Executive assistant/reception": "8", "Scheduling/care coordination": "9", "Billing": "2", "HR/Recruitment": "7", "Field supervisor": "2"}, "q8": "2\u20133 years", "q9": "Rural", "q10": "HR/Recruitment", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false}];
+const DUMMY_SEED = [{"id": "x1945nq45347", "ts": 1781589915144, "q1": "Virginia", "q2": "0\u2013500", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "1", "Billing": "1"}, "q8": "2\u20133 years", "q9": "Urban", "q10": "Field supervisor", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Billing"}, {"id": "vg0fn9xua608", "ts": 1780240251661, "q1": "New Jersey", "q2": "0\u2013500", "q3": "Franchise network", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "2"}, "q8": "2\u20133 years", "q9": "Mixed", "q10": "Executive assistant/reception", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Sales/marketing"}, {"id": "r7tcs4cc786c", "ts": 1781734202799, "q1": "Kansas", "q2": "501\u20131,000", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Hybrid", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "1", "Scheduling/care coordination": "1", "Billing": "1"}, "q8": "6\u201312 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "Yes", "q11Positions": ["Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "bcxuljyl87fe", "ts": 1781699887270, "q1": "Kentucky", "q2": "501\u20131,000", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "3"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "q2y9v86wda7d", "ts": 1782353092123, "q1": "Delaware", "q2": "1,001\u20131,500", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "Sales/marketing": 4}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Full-time", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Sales/marketing": "1", "Executive assistant/reception": "1", "Scheduling/care coordination": "4", "Billing": "1"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Field supervisor", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "HR/Recruitment"}, {"id": "14j1ripz780f", "ts": 1781167007513, "q1": "Texas", "q2": "1,001\u20131,500", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Executive assistant/reception": 2}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Hybrid", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "1", "Scheduling/care coordination": "1"}, "q8": "Less than 6 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "HR/Recruitment"}, {"id": "xfgcaqvk7684", "ts": 1781237401063, "q1": "South Dakota", "q2": "1,501\u20132,000", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Part-time", "Scheduling/care coordination": "Full-time", "Billing": "Part-time", "HR/Recruitment": "Part-time", "Field supervisor": "Full-time"}, "q7": {"Executive assistant/reception": "2", "Scheduling/care coordination": "2", "Billing": "5", "HR/Recruitment": "5", "Field supervisor": "1"}, "q8": "Less than 6 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Field supervisor"}, {"id": "2wx7ptx648d3", "ts": 1780306702926, "q1": "Delaware", "q2": "1,501\u20132,000", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Executive assistant/reception": 2, "Field supervisor": 3}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Full-time"}, "q7": {"Executive assistant/reception": "5", "Scheduling/care coordination": "2", "Field supervisor": "5"}, "q8": "6\u201312 months", "q9": "Mixed", "q10": "Billing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Executive assistant/reception"}, {"id": "lvxwqzxe1737", "ts": 1780159824875, "q1": "Rhode Island", "q2": "2,001\u20132,500", "q3": "Independent", "q4": "Private pay", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "HR/Recruitment": 3, "Sales/marketing": 4}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Not applicable"}, "q7": {"Sales/marketing": "4", "Scheduling/care coordination": "2", "Billing": "4", "HR/Recruitment": "5"}, "q8": "Less than 6 months", "q9": "Rural", "q10": "Executive assistant/reception", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "nn8ztv0532b2", "ts": 1782101729519, "q1": "New Hampshire", "q2": "2,001\u20132,500", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Full-time", "HR/Recruitment": "Part-time", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "3", "Scheduling/care coordination": "7", "Billing": "7", "HR/Recruitment": "1"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Field supervisor", "q11": "Yes", "q11Positions": ["Executive assistant/reception"], "q12Email": "", "q12Consent": false, "q13": "Sales/marketing"}, {"id": "7lxxezdua82e", "ts": 1780548870021, "q1": "Oklahoma", "q2": "2,501\u20133,000", "q3": "Franchise network", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Hybrid", "Executive assistant/reception": "Part-time", "Scheduling/care coordination": "Hybrid", "Billing": "Full-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Part-time"}, "q7": {"Sales/marketing": "3", "Executive assistant/reception": "7", "Scheduling/care coordination": "6", "Billing": "5", "HR/Recruitment": "3", "Field supervisor": "4"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Scheduling/care coordination", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "l8m1g9fk33c8", "ts": 1782180510715, "q1": "Wisconsin", "q2": "2,501\u20133,000", "q3": "Franchise network", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "HR/Recruitment": 3, "Field supervisor": 4}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Hybrid", "HR/Recruitment": "Full-time", "Field supervisor": "Part-time"}, "q7": {"Scheduling/care coordination": "6", "Billing": "2", "HR/Recruitment": "2", "Field supervisor": "7"}, "q8": "6\u201312 months", "q9": "Rural", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "v4ykadejbb47", "ts": 1781731963069, "q1": "Washington", "q2": "3,001+", "q3": "Franchise network", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Full-time", "Field supervisor": "Full-time"}, "q7": {"Sales/marketing": "2", "Executive assistant/reception": "6", "Scheduling/care coordination": "6", "Billing": "10", "HR/Recruitment": "5", "Field supervisor": "1"}, "q8": "Less than 6 months", "q9": "Mixed", "q10": "HR/Recruitment", "q11": "Yes", "q11Positions": ["Sales/marketing", "Executive assistant/reception"], "q12Email": "", "q12Consent": false, "q13": "Sales/marketing"}, {"id": "knqt3wve3180", "ts": 1781691803583, "q1": "West Virginia", "q2": "3,001+", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Part-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Hybrid"}, "q7": {"Sales/marketing": "12", "Executive assistant/reception": "8", "Scheduling/care coordination": "9", "Billing": "2", "HR/Recruitment": "7", "Field supervisor": "2"}, "q8": "2\u20133 years", "q9": "Rural", "q10": "HR/Recruitment", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Executive assistant/reception"}];
 // ─── Supabase config ─────────────────────────────────────────────
 const SUPABASE_URL = "https://zpuewrcmqptccvfhgmgm.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwdWV3cmNtcXB0Y2N2ZmhnbWdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMTM3ODUsImV4cCI6MjA5Njc4OTc4NX0.RlES5BRWyGKGnRsvq0_0K5pPDGE_NdHaZFAFwvIU1kE";
@@ -202,11 +246,13 @@ function genToken() {
 // ─── Shared UI pieces ────────────────────────────────────────────
 function Logo() {
   return (
-    <div style={{display:"flex",alignItems:"center",gap:10}}>
-      <img src="https://sallysupport.com/wp-content/uploads/2024/09/logo-icon.png"
-        alt="SallySupport" style={{height:36}} onError={e=>e.target.style.display="none"} />
-      <span style={{fontWeight:700,fontSize:18,color:B.navy,letterSpacing:"-0.3px"}}>SallySupport</span>
-    </div>
+    <a href="https://sallysupport.com/?utm_source=benchmark_report&utm_medium=survey&utm_campaign=staffing_benchmark"
+      target="_blank" rel="noopener noreferrer"
+      style={{display:"flex",alignItems:"center",textDecoration:"none"}}>
+      <img src="https://sallysupport.com/wp-content/uploads/2024/09/logo.png"
+        alt="SallySupport" style={{height:40,objectFit:"contain"}}
+        onError={e=>e.target.style.display="none"} />
+    </a>
   );
 }
 
@@ -268,6 +314,7 @@ function SurveyShell({ children, step, total, onNext, onBack, nextLabel="Continu
             {nextLabel}
           </Btn>
         </div>
+        <PartnerStrip />
       </div>
     </div>
   );
@@ -651,10 +698,33 @@ function Q12({ email, onEmail, consent, onConsent }) {
 }
 
 
+// Q13 — Highest turnover role
+function Q13({ value, onChange }) {
+  return (
+    <>
+      <QLabel>In which office role do you experience the highest turnover?</QLabel>
+      <QSub>Select the position that has seen the most employee churn in your agency.</QSub>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {[...OFFICE_ROLES,"No significant turnover in any role"].map(role=>(
+          <label key={role} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 18px",
+            borderRadius:8,border:`1.5px solid ${value===role?B.navy:B.gray200}`,
+            background:value===role?B.tealLight:B.white,cursor:"pointer",transition:"all .15s"}}>
+            <input type="radio" name="turnover" value={role} checked={value===role}
+              onChange={()=>onChange(role)}
+              style={{accentColor:B.navy,width:18,height:18}}/>
+            <span style={{fontSize:15,color:B.navy,fontWeight:value===role?600:400}}>{role}</span>
+          </label>
+        ))}
+      </div>
+    </>
+  );
+}
+
+
 // ─── Survey flow ─────────────────────────────────────────────────
 function Survey({ onComplete }) {
   const [step,setStep] = useState(1);
-  const TOTAL = 12;
+  const TOTAL = 13;
   const [q1,setQ1] = useState("");
   const [q2,setQ2] = useState("");
   const [q3,setQ3] = useState("");  const [q3Other,setQ3Other] = useState("");
@@ -667,6 +737,7 @@ function Survey({ onComplete }) {
   const [q10,setQ10] = useState("");  const [q10Other,setQ10Other] = useState("");
   const [q11,setQ11] = useState("");  const [q11Positions,setQ11Positions] = useState([]);
   const [q12Email,setQ12Email] = useState("");  const [q12Consent,setQ12Consent] = useState(false);
+  const [q13,setQ13] = useState("");
 
   const canNext = [
     ()=>!!q1,
@@ -680,6 +751,7 @@ function Survey({ onComplete }) {
     ()=>!!q9,
     ()=>!!q10&&(q10!=="Other"||q10Other.trim()),
     ()=>!!q11,
+    ()=>!!q13,
     ()=>!!q12Email&&q12Email.includes("@")&&q12Email.includes("."),
   ][step-1]?.();
 
@@ -704,6 +776,7 @@ function Survey({ onComplete }) {
       q10: q10==="Other"?`Other: ${q10Other}`:q10,
       q11, q11Positions,
       q12Email, q12Consent,
+      q13,
     };
     await addResponse(response);
     localStorage.setItem(TOKEN_KEY, token);
@@ -722,6 +795,7 @@ function Survey({ onComplete }) {
     <Q9 value={q9} onChange={setQ9}/>,
     <Q10 value={q10} onChange={setQ10} otherText={q10Other} onOtherText={setQ10Other}/>,
     <Q11 value={q11} onChange={setQ11} positions={q11Positions} onPositions={setQ11Positions}/>,
+    <Q13 value={q13} onChange={setQ13}/>,
     <Q12 email={q12Email} onEmail={setQ12Email} consent={q12Consent} onConsent={setQ12Consent}/>,
   ];
 
@@ -894,6 +968,7 @@ function OtherList({ label, items }) {
 }
 
 function FilterBar({ filters, setFilters, responses, hoursFilter, setHoursFilter, title }) {
+  const [open, setOpen] = useState(false);
   const states = [...new Set(responses.map(r=>r.q1))].filter(Boolean).sort();
   const types = ["Franchise network","Independent"];
   const payers = ["Private pay","Medicaid","Long-term care insurance","Veterans Affairs"];
@@ -905,227 +980,325 @@ function FilterBar({ filters, setFilters, responses, hoursFilter, setHoursFilter
     transition:"all .15s",
   });
   const hasAnyFilter = filters.agencyType||filters.payer||filters.location||filters.market||hoursFilter;
+
+  // Build active filter summary for collapsed view
+  const activeLabels = [
+    filters.agencyType && filters.agencyType.split(" ")[0],
+    filters.payer && filters.payer.split(" ")[0],
+    filters.location,
+    filters.market,
+    hoursFilter && `${hoursFilter} hrs`,
+  ].filter(Boolean);
+
   return (
-    <div style={{background:B.gray50,border:`1.5px solid ${B.gray200}`,borderRadius:10,
-      padding:"16px 20px",marginBottom:20}}>
-      <div style={{fontSize:13,fontWeight:600,color:B.navy,marginBottom:12}}>
-        {title || "Filter by:"}
-      </div>
-      <div style={{display:"grid",gap:10}}>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
-          <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>Agency type</span>
-          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-            {types.map(t=>(
-              <button key={t} style={chip(filters.agencyType===t)}
-                onClick={()=>sel("agencyType",t)}>{t}</button>
-            ))}
-          </div>
-        </div>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
-          <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>Payer source</span>
-          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-            {payers.map(p=>(
-              <button key={p} style={chip(filters.payer===p)}
-                onClick={()=>sel("payer",p)}>{p}</button>
-            ))}
-          </div>
-        </div>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
-          <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>State/Province</span>
-          <select value={filters.location} onChange={e=>setFilters(f=>({...f,location:e.target.value}))}
-            style={{padding:"5px 10px",fontSize:12,borderRadius:6,border:`1.5px solid ${B.gray200}`,
-              background:filters.location?B.navy:B.white,color:filters.location?B.white:B.gray600}}>
-            <option value="">All locations</option>
-            {states.map(s=><option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-        {setHoursFilter && (
-          <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
-            <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>Agency size</span>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-              {HOUR_RANGES.map(hr=>(
-                <button key={hr} style={chip(hoursFilter===hr)}
-                  onClick={()=>setHoursFilter(hoursFilter===hr?"":hr)}>{hr} hrs</button>
-              ))}
-            </div>
-          </div>
-        )}
-        {filters.market !== undefined && (
-          <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
-            <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>Market type</span>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-              {MARKET_TYPES.map(m=>(
-                <button key={m} style={chip(filters.market===m)}
-                  onClick={()=>setFilters(f=>({...f,market:f.market===m?"":m}))}>{m}</button>
-              ))}
-            </div>
-          </div>
-        )}
-        {hasAnyFilter && (
-          <div>
-            <button style={{...chip(false),borderColor:B.gray300,color:B.gray500,fontSize:12}}
-              onClick={()=>{setFilters({agencyType:"",payer:"",location:"",market:""});setHoursFilter&&setHoursFilter("");}}>
-              Clear all filters
-            </button>
-          </div>
+    <div style={{marginBottom:16}}>
+      {/* Collapsed toggle row */}
+      <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+        <button
+          onClick={()=>setOpen(o=>!o)}
+          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",
+            borderRadius:20,fontSize:12,cursor:"pointer",
+            border:`1.5px solid ${hasAnyFilter?B.navy:B.gray200}`,
+            background:hasAnyFilter?B.navy:B.white,
+            color:hasAnyFilter?B.white:B.gray600,
+            fontWeight:600,transition:"all .15s"}}>
+          <span style={{fontSize:13}}>{open?"▲":"▼"}</span>
+          {hasAnyFilter ? `Filters (${activeLabels.length} active)` : "Filter"}
+        </button>
+        {/* Active filter pills */}
+        {!open && activeLabels.map((lbl,i)=>(
+          <span key={i} style={{fontSize:12,padding:"4px 10px",borderRadius:20,
+            background:B.tealLight,color:B.teal,border:`1px solid ${B.teal}`,fontWeight:500}}>
+            {lbl}
+          </span>
+        ))}
+        {hasAnyFilter && !open && (
+          <button style={{fontSize:12,color:B.gray400,background:"none",border:"none",
+            cursor:"pointer",textDecoration:"underline",padding:0}}
+            onClick={()=>{setFilters({agencyType:"",payer:"",location:"",market:""});setHoursFilter&&setHoursFilter("");}}>
+            Clear
+          </button>
         )}
       </div>
+
+      {/* Expanded panel */}
+      {open && (
+        <div style={{background:B.gray50,border:`1.5px solid ${B.gray200}`,borderRadius:10,
+          padding:"16px 20px",marginTop:10}}>
+          <div style={{display:"grid",gap:10}}>
+            <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
+              <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>Agency type</span>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                {types.map(t=>(
+                  <button key={t} style={chip(filters.agencyType===t)}
+                    onClick={()=>sel("agencyType",t)}>{t}</button>
+                ))}
+              </div>
+            </div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
+              <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>Payer source</span>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                {payers.map(p=>(
+                  <button key={p} style={chip(filters.payer===p)}
+                    onClick={()=>sel("payer",p)}>{p}</button>
+                ))}
+              </div>
+            </div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
+              <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>State/Province</span>
+              <select value={filters.location} onChange={e=>setFilters(f=>({...f,location:e.target.value}))}
+                style={{padding:"5px 10px",fontSize:12,borderRadius:6,border:`1.5px solid ${B.gray200}`,
+                  background:filters.location?B.navy:B.white,color:filters.location?B.white:B.gray600}}>
+                <option value="">All locations</option>
+                {states.map(s=><option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            {setHoursFilter && (
+              <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
+                <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>Agency size</span>
+                <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                  {HOUR_RANGES.map(hr=>(
+                    <button key={hr} style={chip(hoursFilter===hr)}
+                      onClick={()=>setHoursFilter(hoursFilter===hr?"":hr)}>{hr} hrs</button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {filters.market !== undefined && (
+              <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
+                <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>Market type</span>
+                <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                  {MARKET_TYPES.map(m=>(
+                    <button key={m} style={chip(filters.market===m)}
+                      onClick={()=>setFilters(f=>({...f,market:f.market===m?"":m}))}>{m}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {hasAnyFilter && (
+              <div>
+                <button style={{...chip(false),borderColor:B.gray300,color:B.gray500,fontSize:12}}
+                  onClick={()=>{setFilters({agencyType:"",payer:"",location:"",market:""});setHoursFilter&&setHoursFilter("");}}>
+                  Clear all filters
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── Inline choropleth map (no external deps) ───────────────────
-const GEO_REGIONS = [
-{name:"Alabama",paths:["M554,525L568,524L579,562L557,566L557,573L551,573L548,557L547,526L554,525Z"],cx:563.4,cy:554.9},
-{name:"Alaska",paths:["M412,680L419,686L412,680Z", "M410,681L406,675L410,681Z", "M407,672L409,677L407,672Z", "M370,621L381,622L390,666L400,670L403,665L422,684L404,668L403,673L373,665L365,674L367,664L347,689L329,695L352,676L340,676L333,665L337,654L345,651L332,641L346,640L338,626L355,616L370,621Z", "M325,696L320,698L325,696Z", "M322,648L328,651L322,648Z", "M268,680L263,679L268,680Z"],cx:419.6,cy:683.4},
-{name:"Arizona",paths:["M380,503L372,559L326,538L342,496L380,503Z"],cx:339.2,cy:521.4},
-{name:"Arkansas",paths:["M496,515L530,513L525,548L500,550L496,515Z"],cx:520.5,cy:531.3},
-{name:"California",paths:["M287,430L310,437L301,465L333,514L329,536L307,534L299,516L284,506L274,443L280,427L287,430Z"],cx:295.2,cy:487.7},
-{name:"Colorado",paths:["M395,465L438,470L436,509L380,503L386,464L395,465Z"],cx:405.3,cy:486.4},
-{name:"Connecticut",paths:["M648,435L657,432L658,439L647,446L648,435Z"],cx:651.1,cy:439.3},
-{name:"Delaware",paths:["M637,461L643,473L637,461Z"],cx:638.2,cy:465.5},
-{name:"Florida",paths:["M575,563L610,560L631,597L630,614L618,610L593,572L558,573L557,566L575,563Z"],cx:601.4,cy:583.8},
-{name:"Georgia",paths:["M588,520L612,546L606,565L578,560L568,524L588,520Z"],cx:594.1,cy:544.1},
-{name:"Hawaii",paths:["M654,684L646,669L649,660L669,673L654,684Z", "M636,646L646,653L636,646Z", "M629,642L623,644L629,642Z", "M611,634L608,641L611,634Z", "M584,624L586,629L578,628L584,624Z"],cx:654.8,cy:672.1},
-{name:"Idaho",paths:["M354,378L356,413L365,426L378,428L373,452L331,443L348,376L354,378Z"],cx:354.4,cy:412.9},
-{name:"Illinois",paths:["M522,454L542,452L545,460L549,488L542,506L536,507L518,482L522,454Z"],cx:532.3,cy:483.4},
-{name:"Indiana",paths:["M556,458L565,456L569,485L546,498L545,460L556,458Z"],cx:555.0,cy:485.6},
-{name:"Iowa",paths:["M516,445L526,459L517,475L485,475L478,446L516,445Z"],cx:504.2,cy:460.3},
-{name:"Kansas",paths:["M438,479L492,482L494,510L436,509L438,479Z"],cx:471.6,cy:489.1},
-{name:"Kentucky",paths:["M576,484L593,494L585,503L536,512L546,497L576,484Z"],cx:564.5,cy:496.2},
-{name:"Louisiana",paths:["M504,549L525,548L522,569L538,568L545,587L504,583L504,549Z"],cx:525.5,cy:574.9},
-{name:"Maine",paths:["M661,420L651,400L656,376L663,374L680,395L661,420Z"],cx:665.3,cy:398.1},
-{name:"Maryland",paths:["M607,469L635,462L643,477L635,476L634,464L635,479L620,467L608,474L607,469Z"],cx:637.5,cy:479.4},
-{name:"Massachusetts",paths:["M660,422L670,431L644,435L644,428L660,422Z"],cx:660.3,cy:429.9},
-{name:"Michigan",paths:["M574,455L550,458L550,430L558,418L570,422L568,437L577,434L574,455Z", "M541,427L520,414L534,404L533,411L567,414L545,418L541,427Z"],cx:564.2,cy:435.8},
-{name:"Minnesota",paths:["M509,414L505,433L517,445L479,446L474,392L489,388L496,396L524,400L509,414Z"],cx:501.1,cy:411.2},
-{name:"Mississippi",paths:["M545,526L551,573L541,576L538,568L522,566L530,528L545,526Z"],cx:532.7,cy:551.5},
-{name:"Missouri",paths:["M514,473L538,507L534,518L495,515L494,489L485,475L514,473Z"],cx:518.4,cy:494.5},
-{name:"Montana",paths:["M430,390L427,429L378,423L378,428L364,426L352,387L354,378L430,390Z"],cx:372.3,cy:411.7},
-{name:"Nebraska",paths:["M430,449L478,454L488,480L437,479L438,470L423,468L425,449L430,449Z"],cx:466.1,cy:462.1},
-{name:"Nevada",paths:["M331,443L352,448L333,514L301,465L310,437L331,443Z"],cx:327.6,cy:483.6},
-{name:"New Hampshire",paths:["M651,400L661,420L650,427L651,400Z"],cx:652.5,cy:414.4},
-{name:"New Jersey",paths:["M642,446L644,467L636,463L642,446Z"],cx:640.4,cy:455.1},
-{name:"New Mexico",paths:["M393,505L428,508L424,558L372,559L380,503L393,505Z"],cx:402.9,cy:532.4},
-{name:"New York",paths:["M637,407L646,445L658,442L646,450L632,440L600,447L603,434L619,429L625,413L637,407Z"],cx:631.5,cy:433.1},
-{name:"North Carolina",paths:["M602,502L642,493L638,500L646,500L632,523L605,516L579,522L602,502Z"],cx:616.5,cy:509.4},
-{name:"North Dakota",paths:["M474,392L478,422L428,420L430,390L474,392Z"],cx:467.2,cy:405.9},
-{name:"Ohio",paths:["M595,449L597,471L588,486L568,482L565,457L595,449Z"],cx:585.9,cy:471.1},
-{name:"Oklahoma",paths:["M451,510L494,510L496,543L457,538L451,534L452,515L428,513L451,510Z"],cx:469.2,cy:534.0},
-{name:"Oregon",paths:["M301,391L305,399L343,408L331,443L280,427L301,391Z"],cx:311.2,cy:409.5},
-{name:"Pennsylvania",paths:["M600,445L632,440L641,456L600,470L600,445Z"],cx:625.3,cy:450.9},
-{name:"Rhode Island",paths:["M658,431L658,439L658,431Z"],cx:662.0,cy:434.7},
-{name:"South Carolina",paths:["M591,519L616,517L628,524L612,546L587,524L591,519Z"],cx:606.6,cy:530.1},
-{name:"South Dakota",paths:["M428,420L478,422L480,456L425,449L428,420Z"],cx:464.7,cy:443.1},
-{name:"Tennessee",paths:["M547,511L597,503L579,522L530,528L535,512L547,511Z"],cx:562.3,cy:514.6},
-{name:"Texas",paths:["M437,514L452,515L453,536L500,544L504,583L478,594L471,623L456,616L437,582L420,589L393,556L424,558L427,513L437,514Z"],cx:459.4,cy:572.8},
-{name:"Utah",paths:["M365,450L373,452L372,462L386,464L380,503L342,496L352,448L365,450Z"],cx:371.1,cy:474.2},
-{name:"Vermont",paths:["M649,403L650,427L644,428L637,407L649,403Z"],cx:645.5,cy:415.2},
-{name:"Virginia",paths:["M642,478L640,487L642,478Z", "M616,469L642,493L581,505L606,492L616,469Z"],cx:641.1,cy:481.4},
-{name:"Washington",paths:["M348,376L341,405L305,399L296,388L299,368L309,382L312,366L348,376Z"],cx:312.1,cy:384.5},
-{name:"West Virginia",paths:["M598,462L608,474L621,470L596,497L586,486L598,462Z"],cx:602.0,cy:479.1},
-{name:"Wisconsin",paths:["M520,414L539,421L538,432L544,425L542,452L522,454L505,433L507,414L520,414Z"],cx:525.1,cy:430.0},
-{name:"Wyoming",paths:["M392,425L427,429L423,468L372,462L378,423L392,425Z"],cx:397.4,cy:445.0},
-{name:"Quebec",paths:["M575,308L570,314L575,308Z", "M682,340L696,341L676,342L682,340Z", "M703,354L702,360L703,354Z", "M711,308L700,328L663,343L651,370L642,370L651,371L645,387L666,354L682,352L679,361L660,369L649,403L628,410L629,404L598,404L582,355L587,358L587,347L574,326L588,304L572,286L577,268L568,264L565,248L585,241L599,251L609,249L612,258L605,261L616,265L613,272L624,270L621,280L625,270L629,275L631,264L635,268L635,247L662,289L662,297L640,301L657,326L669,327L668,311L672,321L708,303L711,308Z"],cx:565.0,cy:245.6},
-{name:"Newfoundland and Labrador",paths:["M635,247L676,287L695,282L680,299L686,301L696,285L700,292L709,289L712,308L708,303L672,321L668,311L669,327L651,323L640,301L662,297L662,289L635,247Z", "M720,310L721,324L722,316L732,324L741,316L742,325L747,319L744,326L749,331L751,323L757,336L750,338L744,330L742,342L742,333L735,339L735,334L716,348L716,303L720,310Z"],cx:707.9,cy:287.2},
-{name:"British Columbia",paths:["M272,300L273,295L274,302L280,298L275,306L272,300Z", "M288,312L287,304L288,312Z", "M285,306L287,312L285,306Z", "M291,319L291,312L291,319Z", "M276,317L271,305L276,317Z", "M289,348L285,337L300,348L307,370L289,348Z", "M348,376L311,365L306,343L302,348L296,344L302,340L291,338L299,332L292,328L300,326L300,321L291,323L296,307L290,311L288,304L296,284L287,238L273,242L272,228L360,266L342,328L367,380L348,376Z"],cx:274.9,cy:318.9},
-{name:"Nunavut",paths:["M443,101L443,109L451,109L448,118L436,119L443,101Z", "M431,146L432,140L438,157L439,138L446,141L448,164L461,175L451,180L457,188L439,181L411,188L412,180L401,175L401,168L427,173L431,146Z", "M492,180L501,182L502,195L505,184L510,187L516,206L524,184L519,176L532,176L540,199L533,212L526,206L532,214L519,212L518,225L499,220L520,228L507,244L490,239L505,250L494,258L487,282L450,282L453,239L420,229L381,185L386,169L407,184L402,193L428,200L432,214L432,195L441,190L430,195L431,190L440,187L454,202L469,198L473,204L472,193L480,196L480,214L482,198L490,192L489,183L477,176L482,156L496,175L492,180Z", "M621,181L620,202L609,197L611,189L594,198L620,212L623,227L602,222L622,235L594,232L580,219L562,228L560,216L571,221L567,216L577,211L571,205L576,191L561,176L555,182L558,175L541,162L544,171L532,171L536,174L508,172L502,164L512,164L500,158L502,140L515,132L510,145L519,160L512,164L520,164L515,137L525,131L531,151L534,143L543,150L538,141L549,139L554,154L557,146L558,154L561,146L567,148L564,157L569,150L570,162L572,151L579,153L577,164L585,157L577,165L589,163L581,166L584,173L599,179L602,173L607,183L611,177L611,183L621,181Z", "M527,8L541,14L530,26L536,27L531,34L540,25L530,47L534,52L520,62L530,63L519,66L530,66L530,77L524,87L515,84L529,94L521,102L515,95L516,100L498,102L504,92L498,85L509,90L513,80L511,88L506,74L500,81L501,72L512,74L513,67L505,69L499,53L514,60L506,52L519,42L514,42L516,34L499,50L506,40L496,49L492,46L501,39L491,44L495,37L486,36L500,31L498,23L510,30L503,17L514,20L510,13L527,8Z", "M476,97L498,104L491,105L500,114L522,107L529,116L523,122L492,124L487,104L480,106L476,97Z", "M523,232L525,218L552,236L539,234L529,247L527,240L521,243L523,232Z", "M481,44L504,66L497,81L482,72L490,66L478,66L481,44Z", "M462,140L465,133L476,135L470,144L477,156L469,163L456,146L464,146L462,140Z", "M480,140L483,131L497,133L492,146L485,146L486,155L480,140Z", "M468,109L464,102L471,100L473,120L465,120L470,112L459,114L462,103L468,109Z", "M466,188L472,178L483,190L478,194L466,188Z", "M458,76L455,66L470,85L458,76Z", "M528,130L545,136L534,140L528,130Z", "M563,186L557,197L556,186L563,186Z", "M479,122L483,113L486,124L479,122Z", "M545,246L539,256L545,246Z", "M473,74L481,79L476,87L473,74Z", "M448,143L444,134L451,136L448,143Z", "M560,255L556,250L560,255Z", "M569,342L572,346L564,344L569,342Z", "M486,88L477,89L486,88Z", "M453,86L454,94L453,86Z", "M546,176L544,182L546,176Z", "M474,131L468,133L474,131Z", "M471,63L469,56L471,63Z", "M459,104L454,107L459,104Z"],cx:443.9,cy:75.8},
-{name:"Northwest Territories",paths:["M442,72L434,76L442,72Z", "M442,82L432,86L442,82Z", "M436,119L424,122L434,114L414,110L423,106L416,106L424,97L437,111L436,119Z", "M399,168L422,169L399,157L412,153L399,149L403,140L418,133L416,142L422,138L425,148L431,146L427,173L399,168Z", "M450,282L341,260L341,250L330,248L324,230L327,175L319,171L327,152L334,158L357,150L338,160L364,149L368,166L374,158L372,166L386,168L381,185L408,219L453,239L450,282Z", "M404,122L412,121L416,131L382,150L376,137L390,113L404,122Z", "M423,90L418,98L418,91L410,101L402,97L416,84L424,83L423,90Z", "M330,152L340,151L334,158L330,152Z", "M417,100L410,104L417,100Z"],cx:439.0,cy:75.0},
-{name:"New Brunswick",paths:["M658,377L661,368L682,362L682,370L695,374L676,393L666,376L658,377Z"],cx:683.4,cy:361.0},
-{name:"Nova Scotia",paths:["M714,364L713,370L720,364L713,372L712,357L714,364Z", "M694,376L716,374L693,403L686,396L701,380L691,384L694,376Z"],cx:714.9,cy:371.5},
-{name:"Saskatchewan",paths:["M450,282L447,391L392,385L410,277L450,282Z"],cx:437.4,cy:337.9},
-{name:"Alberta",paths:["M366,380L342,328L360,266L410,277L392,385L366,380Z"],cx:359.9,cy:350.7},
-{name:"Prince Edward Island",paths:["M693,372L690,366L693,372L705,366L693,372Z"],cx:697.3,cy:370.6},
-{name:"Yukon",paths:["M342,260L265,220L316,136L327,152L319,171L327,175L324,230L342,260Z"],cx:321.8,cy:140.6},
-{name:"Manitoba",paths:["M450,282L487,282L498,313L518,312L487,354L487,392L447,391L450,282Z"],cx:476.2,cy:323.4},
-{name:"Ontario",paths:["M583,361L596,403L630,407L581,452L581,419L595,421L586,411L560,410L555,396L544,390L511,400L487,388L487,354L518,312L541,328L558,324L566,352L575,355L574,362L583,361Z", "M571,414L580,414L571,414Z"],cx:582.0,cy:358.6}
+// ─── Tile grid map ───────────────────────────────────────────────
+const TILE_GRID = [
+  {row:0,col:2,abbr:"YT",name:"Yukon"},
+  {row:0,col:3,abbr:"NT",name:"Northwest Territories"},
+  {row:0,col:5,abbr:"NU",name:"Nunavut"},
+  {row:1,col:2,abbr:"BC",name:"British Columbia"},
+  {row:1,col:3,abbr:"AB",name:"Alberta"},
+  {row:1,col:4,abbr:"SK",name:"Saskatchewan"},
+  {row:1,col:5,abbr:"MB",name:"Manitoba"},
+  {row:1,col:6,abbr:"ON",name:"Ontario"},
+  {row:1,col:7,abbr:"QC",name:"Quebec"},
+  {row:1,col:8,abbr:"NL",name:"Newfoundland and Labrador"},
+  {row:2,col:8,abbr:"NB",name:"New Brunswick"},
+  {row:2,col:9,abbr:"NS",name:"Nova Scotia"},
+  {row:2,col:10,abbr:"PE",name:"Prince Edward Island"},
+  {row:3,col:0,abbr:"AK",name:"Alaska"},
+  {row:3,col:10,abbr:"ME",name:"Maine"},
+  {row:4,col:9,abbr:"VT",name:"Vermont"},
+  {row:4,col:10,abbr:"NH",name:"New Hampshire"},
+  {row:5,col:0,abbr:"WA",name:"Washington"},
+  {row:5,col:1,abbr:"ID",name:"Idaho"},
+  {row:5,col:2,abbr:"MT",name:"Montana"},
+  {row:5,col:3,abbr:"ND",name:"North Dakota"},
+  {row:5,col:4,abbr:"MN",name:"Minnesota"},
+  {row:5,col:5,abbr:"IL",name:"Illinois"},
+  {row:5,col:6,abbr:"WI",name:"Wisconsin"},
+  {row:5,col:7,abbr:"MI",name:"Michigan"},
+  {row:5,col:8,abbr:"NY",name:"New York"},
+  {row:5,col:9,abbr:"RI",name:"Rhode Island"},
+  {row:5,col:10,abbr:"MA",name:"Massachusetts"},
+  {row:6,col:0,abbr:"OR",name:"Oregon"},
+  {row:6,col:1,abbr:"NV",name:"Nevada"},
+  {row:6,col:2,abbr:"WY",name:"Wyoming"},
+  {row:6,col:3,abbr:"SD",name:"South Dakota"},
+  {row:6,col:4,abbr:"IA",name:"Iowa"},
+  {row:6,col:5,abbr:"IN",name:"Indiana"},
+  {row:6,col:6,abbr:"OH",name:"Ohio"},
+  {row:6,col:7,abbr:"PA",name:"Pennsylvania"},
+  {row:6,col:8,abbr:"NJ",name:"New Jersey"},
+  {row:6,col:9,abbr:"CT",name:"Connecticut"},
+  {row:7,col:0,abbr:"CA",name:"California"},
+  {row:7,col:1,abbr:"UT",name:"Utah"},
+  {row:7,col:2,abbr:"CO",name:"Colorado"},
+  {row:7,col:3,abbr:"NE",name:"Nebraska"},
+  {row:7,col:4,abbr:"MO",name:"Missouri"},
+  {row:7,col:5,abbr:"KY",name:"Kentucky"},
+  {row:7,col:6,abbr:"WV",name:"West Virginia"},
+  {row:7,col:7,abbr:"VA",name:"Virginia"},
+  {row:7,col:8,abbr:"MD",name:"Maryland"},
+  {row:7,col:9,abbr:"DE",name:"Delaware"},
+  {row:8,col:1,abbr:"AZ",name:"Arizona"},
+  {row:8,col:2,abbr:"NM",name:"New Mexico"},
+  {row:8,col:3,abbr:"KS",name:"Kansas"},
+  {row:8,col:4,abbr:"AR",name:"Arkansas"},
+  {row:8,col:5,abbr:"TN",name:"Tennessee"},
+  {row:8,col:6,abbr:"NC",name:"North Carolina"},
+  {row:8,col:7,abbr:"SC",name:"South Carolina"},
+  {row:8,col:8,abbr:"DC",name:"Washington D.C."},
+  {row:9,col:3,abbr:"OK",name:"Oklahoma"},
+  {row:9,col:4,abbr:"LA",name:"Louisiana"},
+  {row:9,col:5,abbr:"MS",name:"Mississippi"},
+  {row:9,col:6,abbr:"AL",name:"Alabama"},
+  {row:9,col:7,abbr:"GA",name:"Georgia"},
+  {row:10,col:3,abbr:"TX",name:"Texas"},
+  {row:10,col:9,abbr:"FL",name:"Florida"},
+  {row:10,col:0,abbr:"HI",name:"Hawaii"},
+  {row:10,col:10,abbr:"PR",name:"Puerto Rico"}
 ];
 
 function USCAMap({ responses }) {
-  const [tooltip, setTooltip] = useState(null);
-  const svgRef = useRef(null);
+  const [hovered, setHovered] = useState(null);
+  const [tooltipPos, setTooltipPos] = useState({x:0,y:0});
 
   const counts = {};
   responses.forEach(r => { if(r.q1) counts[r.q1] = (counts[r.q1]||0)+1; });
   const maxCount = Math.max(1, ...Object.values(counts));
 
-  function getColor(name) {
-    const c = counts[name] || 0;
-    if(c === 0) return "#DDE0E6";
+  // Name normalisation — match survey answers to tile names
+  const NAME_MAP = {
+    "District of Columbia": "Washington D.C.",
+    "Yukon Territory": "Yukon",
+    "Newfoundland and Labrador": "Newfoundland and Labrador",
+    "Prince Edward Island": "Prince Edward Island",
+  };
+
+  function getCount(tileName) {
+    return counts[tileName] || counts[NAME_MAP[tileName]] || 0;
+  }
+
+  function getColor(tileName) {
+    const c = getCount(tileName);
+    if (c === 0) return B.gray100;
     const t = c / maxCount;
-    // Interpolate from #C5CEDF (light navy) to #1A2B4A (dark navy)
     const r = Math.round(197 + (26-197)*t);
     const g = Math.round(206 + (43-206)*t);
     const b = Math.round(223 + (74-223)*t);
     return `rgb(${r},${g},${b})`;
   }
 
-  function handleMouseMove(e, name) {
-    const svg = svgRef.current;
-    if(!svg) return;
-    const rect = svg.getBoundingClientRect();
-    const scaleX = 960 / rect.width;
-    const scaleY = 620 / rect.height;
-    const svgX = (e.clientX - rect.left) * scaleX;
-    const svgY = (e.clientY - rect.top) * scaleY;
-    setTooltip({ name, count: counts[name]||0, x: svgX, y: svgY });
+  function getTextColor(tileName) {
+    const c = getCount(tileName);
+    const t = c / maxCount;
+    return t > 0.45 ? B.white : B.gray600;
   }
 
+  const TILE_SIZE = 52;
+  const GAP = 4;
+  const STEP = TILE_SIZE + GAP;
+  const PAD = 8;
+  const maxRow = Math.max(...TILE_GRID.map(t=>t.row));
+  const maxCol = Math.max(...TILE_GRID.map(t=>t.col));
+  const W = (maxCol + 1) * STEP + PAD * 2;
+  const H = (maxRow + 1) * STEP + PAD * 2;
+
+  function handleMouseMove(e, tile) {
+    const wrap = e.currentTarget.closest('div');
+    if (!wrap) return;
+    const rect = wrap.getBoundingClientRect();
+    setTooltipPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    setHovered(tile);
+  }
+
+  // Divider row between Canada and US (between row 2 and row 3)
+  const DIVIDER_Y = PAD + 3 * STEP - GAP/2;
+
   return (
-    <div style={{position:"relative",background:"#F8F9FA",borderRadius:8,overflow:"hidden"}}>
-      <svg ref={svgRef} viewBox="0 0 960 710" style={{width:"100%",display:"block"}}>
-        {GEO_REGIONS.map(region =>
-          region.paths.map((d, i) => (
-            <path
-              key={region.name + i}
-              d={d}
-              fill={getColor(region.name)}
-              stroke="#FFFFFF"
-              strokeWidth="0.8"
-              style={{cursor:"pointer",transition:"fill .2s"}}
-              onMouseMove={e => handleMouseMove(e, region.name)}
-              onMouseLeave={() => setTooltip(null)}
-            />
-          ))
+    <div style={{position:"relative",overflowX:"auto"}}>
+      <div style={{position:"relative",width:W,height:H,margin:"0 auto"}}>
+        {/* Canada / US label */}
+        <div style={{position:"absolute",left:PAD,top:PAD,fontSize:10,
+          fontWeight:600,color:B.gray400,letterSpacing:".5px",textTransform:"uppercase"}}>
+          Canada
+        </div>
+        <div style={{position:"absolute",left:PAD,top:DIVIDER_Y+6,fontSize:10,
+          fontWeight:600,color:B.gray400,letterSpacing:".5px",textTransform:"uppercase"}}>
+          United States
+        </div>
+        {/* Divider */}
+        <div style={{position:"absolute",left:PAD,right:PAD,top:DIVIDER_Y,
+          height:1,background:B.gray200}}/>
+
+        {TILE_GRID.map(tile => {
+          const x = PAD + tile.col * STEP;
+          const y = PAD + tile.row * STEP;
+          const bg = getColor(tile.name);
+          const fg = getTextColor(tile.name);
+          const isHovered = hovered && hovered.abbr === tile.abbr;
+          return (
+            <div
+              key={tile.abbr}
+              style={{
+                position:"absolute", left:x, top:y,
+                width:TILE_SIZE, height:TILE_SIZE,
+                background:bg,
+                border:`2px solid ${isHovered ? B.accent : "transparent"}`,
+                borderRadius:8,
+                display:"flex", flexDirection:"column",
+                alignItems:"center", justifyContent:"center",
+                cursor:"pointer",
+                transition:"border-color .1s, background .2s",
+                boxSizing:"border-box",
+              }}
+              onMouseMove={e => handleMouseMove(e, tile)}
+              onMouseLeave={() => setHovered(null)}
+            >
+              <span style={{fontSize:11,fontWeight:700,color:fg,letterSpacing:".3px"}}>
+                {tile.abbr}
+              </span>
+              {getCount(tile.name) > 0 && (
+                <span style={{fontSize:9,color:fg,opacity:0.85,marginTop:1}}>
+                  {getCount(tile.name)}
+                </span>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Tooltip */}
+        {hovered && (
+          <div style={{
+            position:"absolute",
+            left: Math.min(tooltipPos.x + 12, W - 170),
+            top: Math.max(tooltipPos.y - 44, 4),
+            background:B.navy, color:B.white,
+            padding:"8px 12px", borderRadius:6,
+            fontSize:13, pointerEvents:"none",
+            zIndex:10, whiteSpace:"nowrap",
+            boxShadow:"0 2px 8px rgba(0,0,0,.15)",
+          }}>
+            <div style={{fontWeight:600}}>{hovered.name}</div>
+            <div style={{fontSize:11,color:B.tealLight,marginTop:2}}>
+              {getCount(hovered.name)} respondent{getCount(hovered.name)!==1?"s":""}
+            </div>
+          </div>
         )}
-        <text x="247" y="607" fontSize="9" fill="#9AA0AD" fontStyle="italic">Alaska</text>
-        <text x="517" y="611" fontSize="9" fill="#9AA0AD" fontStyle="italic">Hawaii</text>
-        <defs>
-          <linearGradient id="mapLegend" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="#DDE0E6"/>
-            <stop offset="100%" stopColor="#1A2B4A"/>
-          </linearGradient>
-        </defs>
-        <rect x="770" y="692" width="150" height="10" rx="3" fill="url(#mapLegend)"/>
-        <text x="770" y="689" fontSize="10" fill="#9AA0AD">0</text>
-        <text x="920" y="689" fontSize="10" fill="#9AA0AD" textAnchor="end">{maxCount} respondents</text>
-        {tooltip && (
-          <g>
-            <rect
-              x={Math.min(tooltip.x + 10, 820)}
-              y={Math.max(tooltip.y - 36, 5)}
-              width={Math.max(tooltip.name.length * 7 + 60, 120)}
-              height={36}
-              rx="4"
-              fill="#1A2B4A"
-              opacity="0.93"
-            />
-            <text
-              x={Math.min(tooltip.x + 18, 828)}
-              y={Math.max(tooltip.y - 20, 19)}
-              fontSize="11" fontWeight="600" fill="white"
-            >{tooltip.name}</text>
-            <text
-              x={Math.min(tooltip.x + 18, 828)}
-              y={Math.max(tooltip.y - 7, 32)}
-              fontSize="10" fill="#9FE1CB"
-            >{tooltip.count} respondent{tooltip.count !== 1 ? "s" : ""}</text>
-          </g>
-        )}
-      </svg>
+      </div>
+
+      {/* Legend */}
+      <div style={{display:"flex",alignItems:"center",gap:8,justifyContent:"flex-end",
+        marginTop:8,paddingRight:PAD}}>
+        <span style={{fontSize:11,color:B.gray400}}>0</span>
+        <div style={{width:120,height:10,borderRadius:4,
+          background:`linear-gradient(to right, ${B.gray100}, ${B.navy})`}}/>
+        <span style={{fontSize:11,color:B.gray400}}>{maxCount} responses</span>
+      </div>
     </div>
   );
 }
+
 
 // ─── Hiring timeline ─────────────────────────────────────────────
 function HiringTimeline({ responses, filtered }) {
@@ -1779,6 +1952,101 @@ function MarimekkoChart({ responses, filters, hoursFilter, setHoursFilter }) {
 
 
 
+// ─── Partner components ──────────────────────────────────────────
+// Falls back to a styled wordmark if the logo file is missing.
+function PartnerLogo({ partner, height = 38 }) {
+  const [failed, setFailed] = useState(false);
+
+  // No logo file (or it failed to load) — show a clean wordmark instead
+  if (failed || !partner.logo) {
+    return (
+      <span style={{fontSize:13,fontWeight:700,color:B.navy,textAlign:"center",
+        lineHeight:1.3,letterSpacing:"-0.2px"}}>
+        {partner.name}
+      </span>
+    );
+  }
+
+  const img = (
+    <img src={partner.logo} alt={partner.name}
+      onError={()=>setFailed(true)}
+      style={{maxHeight:height,maxWidth:"100%",objectFit:"contain",display:"block"}}/>
+  );
+
+  // White logo art needs a dark tile behind it to be visible
+  if (partner.darkBg) {
+    return (
+      <span style={{background:B.navy,borderRadius:6,padding:"8px 12px",
+        display:"flex",alignItems:"center",justifyContent:"center",maxWidth:"100%"}}>
+        {img}
+      </span>
+    );
+  }
+  return img;
+}
+
+// Compact logo strip — used at the bottom of the survey
+function PartnerStrip() {
+  return (
+    <div style={{borderTop:`1px solid ${B.gray200}`,marginTop:48,paddingTop:28}}>
+      <div style={{fontSize:12,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+        textTransform:"uppercase",textAlign:"center",marginBottom:20}}>
+        Thanks to our partners
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",
+        gap:20,alignItems:"center",justifyItems:"center",maxWidth:820,margin:"0 auto"}}>
+        {PARTNERS.map(p=>(
+          <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
+            title={p.name}
+            style={{display:"flex",alignItems:"center",justifyContent:"center",
+              height:52,width:"100%",padding:"0 8px",textDecoration:"none",
+              filter:"grayscale(100%)",opacity:0.62,transition:"filter .2s, opacity .2s"}}
+            onMouseEnter={e=>{e.currentTarget.style.filter="none";e.currentTarget.style.opacity="1";}}
+            onMouseLeave={e=>{e.currentTarget.style.filter="grayscale(100%)";e.currentTarget.style.opacity="0.62";}}>
+            <PartnerLogo partner={p} height={36}/>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Full section with blurbs — used at the bottom of the report
+function PartnerSection() {
+  return (
+    <div style={{marginTop:8,marginBottom:40}}>
+      <div style={{fontSize:11,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+        textTransform:"uppercase",marginBottom:16,paddingBottom:8,
+        borderBottom:`1px solid ${B.gray200}`}}>
+        Our partners
+      </div>
+      <p style={{fontSize:14,color:B.gray600,lineHeight:1.6,marginBottom:24}}>
+        The Home Care Office Index is made possible with the support of these organizations
+        serving the home care industry.
+      </p>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16}}>
+        {PARTNERS.map(p=>(
+          <div key={p.name} style={{background:B.white,border:`1.5px solid ${B.gray200}`,
+            borderRadius:10,padding:"20px",display:"flex",flexDirection:"column"}}>
+            <div style={{height:44,display:"flex",alignItems:"center",marginBottom:12}}>
+              <PartnerLogo partner={p} height={40}/>
+            </div>
+            <p style={{fontSize:13,color:B.gray600,lineHeight:1.6,margin:"0 0 14px",flex:1}}>
+              {p.blurb}
+            </p>
+            <a href={p.url} target="_blank" rel="noopener noreferrer"
+              style={{fontSize:13,fontWeight:600,color:B.teal,textDecoration:"none",
+                display:"inline-flex",alignItems:"center",gap:5}}>
+              Visit website <span style={{fontSize:14}}>→</span>
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
 // ─── Key findings ─────────────────────────────────────────────────
 function KeyFindings({ responses, customFindings }) {
   if (responses.length < 5) return null;
@@ -1989,9 +2257,12 @@ function Dashboard({ onBack, responses, customFindings }) {
         <div style={{marginBottom:32}}>
           <div style={{fontSize:13,fontWeight:600,color:B.teal,letterSpacing:".5px",
             textTransform:"uppercase",marginBottom:6}}>Live results</div>
-          <h1 style={{fontSize:30,fontWeight:700,color:B.navy,marginBottom:8}}>
-            Home Care Agency Staffing Benchmark
+          <h1 style={{fontSize:30,fontWeight:700,color:B.navy,marginBottom:6}}>
+            Home Care Office Index
           </h1>
+          <p style={{fontSize:15,fontStyle:"italic",color:B.teal,marginBottom:10,letterSpacing:".1px"}}>
+            A report by SallySupport
+          </p>
           <p style={{fontSize:15,color:B.gray600,lineHeight:1.6}}>
             Aggregated responses from home care agency owners and operators.
             Updated in real time as new agencies participate.
@@ -2121,15 +2392,19 @@ function Dashboard({ onBack, responses, customFindings }) {
         <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
           padding:"24px",marginBottom:48}}>
           <SectionTitle>How long after founding did agencies make their first office hire?</SectionTitle>
-          <NCount n={responses.filter(r=>r.q8).length} label="agencies answered" />
-          <p style={{fontSize:14,color:B.gray600,marginBottom:20,lineHeight:1.6}}>
+          <NCount n={responses.filter(r=>r.q8).length} filtered={filtered.filter(r=>r.q8).length} label="agencies answered" />
+          <p style={{fontSize:14,color:B.gray600,marginBottom:16,lineHeight:1.6}}>
             The time between starting the agency and bringing on the first non-owner office staff member.
           </p>
+          <FilterBar filters={filters} setFilters={setFilters} responses={responses} title="Filter by:" />
           <ResponsiveContainer width="100%" height={290}>
             <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
-              <Pie data={timeToHireData} cx="50%" cy="50%" outerRadius={90} dataKey="value"
+              <Pie data={TIME_TO_FIRST_HIRE.map(t=>({
+                  name:t,value:filtered.filter(r=>r.q8===t).length
+                })).filter(d=>d.value>0)}
+                cx="50%" cy="50%" outerRadius={90} dataKey="value"
                 label={({name,percent})=>`${Math.round(percent*100)}%`} labelLine={{stroke:B.gray200}}>
-                {timeToHireData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                {TIME_TO_FIRST_HIRE.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
               </Pie>
               <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
             </PieChart>
@@ -2177,13 +2452,14 @@ function Dashboard({ onBack, responses, customFindings }) {
         <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
           padding:"24px",marginBottom:48}}>
           <SectionTitle>Do agencies employ offshore/global remote talent, and in which roles?</SectionTitle>
-          <NCount n={responses.filter(r=>r.q11).length} label="agencies answered" />
-          <p style={{fontSize:14,color:B.gray600,marginBottom:20,lineHeight:1.6}}>
+          <NCount n={responses.filter(r=>r.q11).length} filtered={filtered.filter(r=>r.q11).length} label="agencies answered" />
+          <p style={{fontSize:14,color:B.gray600,marginBottom:16,lineHeight:1.6}}>
             For each office role, the percentage of all responding agencies that fill it with offshore/global remote talent.
             Agencies that said "No" contribute zero to each role bar.
           </p>
+          <FilterBar filters={filters} setFilters={setFilters} responses={responses} title="Filter by:" />
           {(() => {
-            const answered = responses.filter(r=>r.q11);
+            const answered = filtered.filter(r=>r.q11);
             const n = answered.length || 1;
             const yesPct = Math.round(responses.filter(r=>r.q11==="Yes").length / n * 100);
             const noPct = 100 - yesPct;
@@ -2240,6 +2516,36 @@ function Dashboard({ onBack, responses, customFindings }) {
         </div>
 
 
+        {/* Q13 — Highest turnover role */}
+        <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
+          padding:"24px",marginBottom:48}}>
+          <SectionTitle>In which office role do agencies experience the highest turnover?</SectionTitle>
+          <NCount n={responses.filter(r=>r.q13).length} filtered={filtered.filter(r=>r.q13).length} label="agencies answered" />
+          <p style={{fontSize:14,color:B.gray600,marginBottom:16,lineHeight:1.6}}>
+            The office function most commonly cited as having the highest employee churn.
+          </p>
+          <FilterBar filters={filters} setFilters={setFilters} responses={responses} title="Filter by:" />
+          {(() => {
+            const turnoverData = [...OFFICE_ROLES,"No significant turnover in any role"].map(role=>({
+              name: role,
+              value: filtered.filter(r=>r.q13===role).length
+            })).filter(d=>d.value>0);
+            return (
+              <ResponsiveContainer width="100%" height={290}>
+                <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
+                  <Pie data={turnoverData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
+                    label={({name,percent})=>`${Math.round(percent*100)}%`}
+                    labelLine={{stroke:B.gray200}}>
+                    {turnoverData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                  </Pie>
+                  <Tooltip formatter={(v,name)=>[`${v} agencies`,name]}/>
+                  <Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
+                </PieChart>
+              </ResponsiveContainer>
+            );
+          })()}
+        </div>
+
         {/* Section 3 */}
         <div style={{fontSize:11,fontWeight:600,color:B.gray400,letterSpacing:"1px",
           textTransform:"uppercase",marginBottom:16,marginTop:8,
@@ -2273,6 +2579,8 @@ function Dashboard({ onBack, responses, customFindings }) {
         </div>
 
         {/* Hiring flow % chart */}
+
+        <PartnerSection />
 
         <div style={{textAlign:"center",padding:"20px 0",fontSize:13,color:B.gray400}}>
           Data reflects {responses.length} anonymous agency response{responses.length!==1?"s":""}.
