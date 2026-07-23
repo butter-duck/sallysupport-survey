@@ -1575,6 +1575,8 @@ function TimelineByHours({ responses, filters }) {
   const [hidden, setHidden] = useState(new Set());
   const svgRef = useRef(null);
 
+  if (!activeResponses.length) return <p style={{color:B.gray400,fontSize:14}}>No data for selected filters.</p>;
+
   function toggleRole(role) {
     setHidden(prev => {
       const next = new Set(prev);
@@ -1786,6 +1788,9 @@ function MarimekkoChart({ responses, filters, hoursFilter, setHoursFilter }) {
     if(hoursFilter && r.q2 !== hoursFilter) return false;
     return true;
   });
+
+  if (!filtered.length) return <p style={{color:B.gray400,fontSize:14}}>No data for selected filters.</p>;
+
   const n = filtered.length || 1;
 
   // Compute pct for each role+seg
@@ -2299,6 +2304,7 @@ function Dashboard({ onBack, responses, customFindings }) {
           <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,padding:"20px"}}>
             <SectionTitle>Weekly billable hours</SectionTitle>
             <NCount n={responses.length} label="agencies" />
+            {!hourData.length ? <p style={{color:B.gray400,fontSize:14}}>No data yet.</p> : (
             <ResponsiveContainer width="100%" height={290}>
               <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
                 <Pie data={hourData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
@@ -2308,10 +2314,12 @@ function Dashboard({ onBack, responses, customFindings }) {
                 <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
               </PieChart>
             </ResponsiveContainer>
+            )}
           </div>
           <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,padding:"20px"}}>
             <SectionTitle>Agency type</SectionTitle>
             <NCount n={responses.length} label="agencies" />
+            {!typeData.length ? <p style={{color:B.gray400,fontSize:14}}>No data yet.</p> : (
             <ResponsiveContainer width="100%" height={290}>
               <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
                 <Pie data={typeData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
@@ -2321,11 +2329,13 @@ function Dashboard({ onBack, responses, customFindings }) {
                 <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
               </PieChart>
             </ResponsiveContainer>
+            )}
             <OtherList label="agency type" items={typeOthers} />
           </div>
           <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,padding:"20px"}}>
             <SectionTitle>Primary payer source</SectionTitle>
             <NCount n={responses.length} label="agencies" />
+            {!payerData.length ? <p style={{color:B.gray400,fontSize:14}}>No data yet.</p> : (
             <ResponsiveContainer width="100%" height={290}>
               <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
                 <Pie data={payerData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
@@ -2335,6 +2345,7 @@ function Dashboard({ onBack, responses, customFindings }) {
                 <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
               </PieChart>
             </ResponsiveContainer>
+            )}
             <OtherList label="payer source" items={payerOthers} />
           </div>
 
@@ -2342,6 +2353,7 @@ function Dashboard({ onBack, responses, customFindings }) {
           <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,padding:"20px"}}>
             <SectionTitle>Primary market type</SectionTitle>
             <NCount n={responses.length} label="agencies" />
+            {!marketTypeData.length ? <p style={{color:B.gray400,fontSize:14}}>No data yet.</p> : (
             <ResponsiveContainer width="100%" height={290}>
               <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
                 <Pie data={marketTypeData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
@@ -2351,6 +2363,7 @@ function Dashboard({ onBack, responses, customFindings }) {
                 <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
               </PieChart>
             </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -2403,18 +2416,26 @@ function Dashboard({ onBack, responses, customFindings }) {
             The time between starting the agency and bringing on the first non-owner office staff member.
           </p>
           <FilterBar filters={filters} setFilters={setFilters} responses={responses} title="Filter by:" />
-          <ResponsiveContainer width="100%" height={290}>
-            <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
-              <Pie data={TIME_TO_FIRST_HIRE.map(t=>({
-                  name:t,value:filtered.filter(r=>r.q8===t).length
-                })).filter(d=>d.value>0)}
-                cx="50%" cy="50%" outerRadius={90} dataKey="value"
-                label={({name,percent})=>`${Math.round(percent*100)}%`} labelLine={{stroke:B.gray200}}>
-                {TIME_TO_FIRST_HIRE.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
-              </Pie>
-              <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
-            </PieChart>
-          </ResponsiveContainer>
+          {(() => {
+            const hireData = TIME_TO_FIRST_HIRE.map(t=>({
+              name:t,value:filtered.filter(r=>r.q8===t).length
+            })).filter(d=>d.value>0);
+            if (!hireData.length) return (
+              <p style={{color:B.gray400,fontSize:14}}>No data for selected filters.</p>
+            );
+            return (
+              <ResponsiveContainer width="100%" height={290}>
+                <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
+                  <Pie data={hireData}
+                    cx="50%" cy="50%" outerRadius={90} dataKey="value"
+                    label={({name,percent})=>`${Math.round(percent*100)}%`} labelLine={{stroke:B.gray200}}>
+                    {hireData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                  </Pie>
+                  <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
+                </PieChart>
+              </ResponsiveContainer>
+            );
+          })()}
         </div>
 
         {/* Q10 — Next intended hire */}
@@ -2633,6 +2654,8 @@ function StackedRolesChart({ responses, filters }) {
     if(filters.market && r.q9!==filters.market) return false;
     return true;
   }) : responses;
+
+  if (!activeResponses.length) return <p style={{color:B.gray400,fontSize:14}}>No data for selected filters.</p>;
 
   const matrix = HOUR_RANGES.map(band => {
     const sub = activeResponses.filter(r => r.q2 === band);
