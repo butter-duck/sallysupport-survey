@@ -1961,13 +1961,14 @@ function MarimekkoChart({ responses, filters, hoursFilter, setHoursFilter }) {
 
 // ─── Partner components ──────────────────────────────────────────
 // Falls back to a styled wordmark if the logo file is missing.
-function PartnerLogo({ partner, height = 38 }) {
+function PartnerLogo({ partner, height = 38, fade = false }) {
   const [failed, setFailed] = useState(false);
+  const fadeClass = fade ? "partner-fade" : undefined;
 
   // No logo file (or it failed to load) — show a clean wordmark instead
   if (failed || !partner.logo) {
     return (
-      <span style={{fontSize:13,fontWeight:700,color:B.navy,textAlign:"center",
+      <span className={fadeClass} style={{fontSize:13,fontWeight:700,color:B.navy,textAlign:"center",
         lineHeight:1.3,letterSpacing:"-0.2px"}}>
         {partner.name}
       </span>
@@ -1975,12 +1976,13 @@ function PartnerLogo({ partner, height = 38 }) {
   }
 
   const img = (
-    <img src={partner.logo} alt={partner.name}
+    <img src={partner.logo} alt={partner.name} className={fadeClass}
       onError={()=>setFailed(true)}
       style={{maxHeight:height,maxWidth:"100%",objectFit:"contain",display:"block"}}/>
   );
 
-  // White logo art needs a dark tile behind it to be visible
+  // White logo art needs a dark tile behind it to be visible — the tile itself
+  // stays solid navy always; only the logo art fades with the rest of the strip.
   if (partner.darkBg) {
     return (
       <span style={{background:B.navy,borderRadius:6,padding:"8px 12px",
@@ -2004,13 +2006,10 @@ function PartnerStrip() {
         gap:20,alignItems:"center",justifyItems:"center",maxWidth:820,margin:"0 auto"}}>
         {PARTNERS.map(p=>(
           <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
-            title={p.name}
+            title={p.name} className="partner-link"
             style={{display:"flex",alignItems:"center",justifyContent:"center",
-              height:52,width:"100%",padding:"0 8px",textDecoration:"none",
-              filter:"grayscale(100%)",opacity:0.62,transition:"filter .2s, opacity .2s"}}
-            onMouseEnter={e=>{e.currentTarget.style.filter="none";e.currentTarget.style.opacity="1";}}
-            onMouseLeave={e=>{e.currentTarget.style.filter="grayscale(100%)";e.currentTarget.style.opacity="0.62";}}>
-            <PartnerLogo partner={p} height={36}/>
+              height:52,width:"100%",padding:"0 8px",textDecoration:"none"}}>
+            <PartnerLogo partner={p} height={36} fade/>
           </a>
         ))}
       </div>

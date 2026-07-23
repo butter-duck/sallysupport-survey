@@ -11,6 +11,8 @@
       body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F8F9FA; }
       #root { min-height: 100vh; }
       input, select, button, textarea { font-family: inherit; }
+      .partner-fade { filter: grayscale(100%); opacity: .62; transition: filter .2s ease, opacity .2s ease; }
+      .partner-link:hover .partner-fade { filter: none; opacity: 1; }
     </style>
   </head>
   <body>
