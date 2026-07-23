@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import * as d3 from "d3";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList } from "recharts";
 import sallysupportLogo from "./assets/sallysupport-logo.png";
-import reelHomeCareLogo from "./assets/partners/reel-home-care.webp";
+import reelHomeCareLogo from "./assets/partners/reel-home-care.png";
 import homeCareStrategyLabLogo from "./assets/partners/home-care-strategy-lab.svg";
 import momentumLogo from "./assets/partners/momentum.png";
 import simitreeLogo from "./assets/partners/simitree.svg";
@@ -52,8 +52,8 @@ const TIME_TO_FIRST_HIRE = ["Less than 6 months","6–12 months","1–2 years","
 // ─── Partners ────────────────────────────────────────────────────
 // logo: bundled locally from src/assets/partners (see imports above) so
 //       rendering doesn't depend on the partner's site staying up/unchanged.
+//       All logo art is white/light — partner sections render on a navy bar.
 //       Partners without a usable source file fall back to a styled wordmark.
-// darkBg: true when the logo art is white and needs a dark tile behind it.
 const PARTNERS = [
   {
     name: "Vitable Health",
@@ -76,21 +76,18 @@ const PARTNERS = [
   {
     name: "Home Care Strategy Lab",
     logo: homeCareStrategyLabLogo,
-    darkBg: true,
     url: "https://www.homecarestrategylab.com",
     blurb: "A podcast and community putting high-growth home care agencies under the microscope to find what actually works.",
   },
   {
     name: "Momentum HC & Technology Consulting",
     logo: momentumLogo,
-    darkBg: true,
     url: "https://www.momentumhtconsulting.com",
     blurb: "Independent advisory firm helping care-at-home providers align strategy, operations, and technology to scale.",
   },
   {
     name: "SimiTree",
     logo: simitreeLogo,
-    darkBg: true,
     url: "https://simitreehc.com",
     blurb: "Post-acute consulting, revenue cycle management, coding, and analytics for home health, hospice, and behavioral health.",
   },
@@ -1973,48 +1970,44 @@ function PartnerLogo({ partner, height = 38, fade = false }) {
   // No logo file (or it failed to load) — show a clean wordmark instead
   if (failed || !partner.logo) {
     return (
-      <span className={fadeClass} style={{fontSize:13,fontWeight:700,color:B.navy,textAlign:"center",
+      <span className={fadeClass} style={{fontSize:13,fontWeight:700,color:B.white,textAlign:"center",
         lineHeight:1.3,letterSpacing:"-0.2px"}}>
         {partner.name}
       </span>
     );
   }
 
-  const img = (
+  return (
     <img src={partner.logo} alt={partner.name} className={fadeClass}
       onError={()=>setFailed(true)}
       style={{maxHeight:height,maxWidth:"100%",objectFit:"contain",display:"block"}}/>
   );
-
-  // White logo art needs a dark tile behind it to be visible — the tile itself
-  // stays solid navy always; only the logo art fades with the rest of the strip.
-  if (partner.darkBg) {
-    return (
-      <span style={{background:B.navy,borderRadius:6,padding:"8px 12px",
-        display:"flex",alignItems:"center",justifyContent:"center",maxWidth:"100%"}}>
-        {img}
-      </span>
-    );
-  }
-  return img;
 }
 
-// Compact logo strip — used at the bottom of the survey
+// Breaks a child out of its centered max-width parent to span the full viewport width.
+const FULL_BLEED = {
+  background: B.navy,
+  width: "100vw",
+  marginLeft: "calc(50% - 50vw)",
+  marginRight: "calc(50% - 50vw)",
+};
+
+// Compact logo strip — used on the welcome screen
 function PartnerStrip() {
   return (
-    <div style={{borderTop:`1px solid ${B.gray200}`,marginTop:48,paddingTop:28}}>
-      <div style={{fontSize:12,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+    <div style={{...FULL_BLEED, marginTop:48, padding:"28px 20px"}}>
+      <div style={{fontSize:12,fontWeight:600,color:"rgba(255,255,255,0.55)",letterSpacing:"1px",
         textTransform:"uppercase",textAlign:"center",marginBottom:20}}>
         Thanks to our partners
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",
-        gap:20,alignItems:"center",justifyItems:"center",maxWidth:820,margin:"0 auto"}}>
+      <div style={{display:"flex",flexWrap:"wrap",gap:28,alignItems:"center",justifyContent:"center",
+        maxWidth:900,margin:"0 auto"}}>
         {PARTNERS.map(p=>(
           <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
             title={p.name} className="partner-link"
             style={{display:"flex",alignItems:"center",justifyContent:"center",
-              height:52,width:"100%",padding:"0 8px",textDecoration:"none"}}>
-            <PartnerLogo partner={p} height={36} fade/>
+              height:40,padding:"0 8px",textDecoration:"none"}}>
+            <PartnerLogo partner={p} height={32} fade/>
           </a>
         ))}
       </div>
@@ -2025,33 +2018,36 @@ function PartnerStrip() {
 // Full section with blurbs — used at the bottom of the report
 function PartnerSection() {
   return (
-    <div style={{marginTop:8,marginBottom:40}}>
-      <div style={{fontSize:11,fontWeight:600,color:B.gray400,letterSpacing:"1px",
-        textTransform:"uppercase",marginBottom:16,paddingBottom:8,
-        borderBottom:`1px solid ${B.gray200}`}}>
-        Our partners
-      </div>
-      <p style={{fontSize:14,color:B.gray600,lineHeight:1.6,marginBottom:24}}>
-        The Home Care Office Index is made possible with the support of these organizations
-        serving the home care industry.
-      </p>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16}}>
-        {PARTNERS.map(p=>(
-          <div key={p.name} style={{background:B.white,border:`1.5px solid ${B.gray200}`,
-            borderRadius:10,padding:"20px",display:"flex",flexDirection:"column"}}>
-            <div style={{height:44,display:"flex",alignItems:"center",marginBottom:12}}>
-              <PartnerLogo partner={p} height={40}/>
+    <div style={{...FULL_BLEED, padding:"40px 20px", marginBottom:40}}>
+      <div style={{maxWidth:1100,margin:"0 auto"}}>
+        <div style={{fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.55)",letterSpacing:"1px",
+          textTransform:"uppercase",marginBottom:16,paddingBottom:8,
+          borderBottom:"1px solid rgba(255,255,255,0.15)"}}>
+          Our partners
+        </div>
+        <p style={{fontSize:14,color:"rgba(255,255,255,0.75)",lineHeight:1.6,marginBottom:24}}>
+          The Home Care Office Index is made possible with the support of these organizations
+          serving the home care industry.
+        </p>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16}}>
+          {PARTNERS.map(p=>(
+            <div key={p.name} style={{background:"rgba(255,255,255,0.06)",
+              border:"1.5px solid rgba(255,255,255,0.15)",
+              borderRadius:10,padding:"20px",display:"flex",flexDirection:"column"}}>
+              <div style={{height:44,display:"flex",alignItems:"center",marginBottom:12}}>
+                <PartnerLogo partner={p} height={40}/>
+              </div>
+              <p style={{fontSize:13,color:"rgba(255,255,255,0.75)",lineHeight:1.6,margin:"0 0 14px",flex:1}}>
+                {p.blurb}
+              </p>
+              <a href={p.url} target="_blank" rel="noopener noreferrer"
+                style={{fontSize:13,fontWeight:600,color:B.teal,textDecoration:"none",
+                  display:"inline-flex",alignItems:"center",gap:5}}>
+                Visit website <span style={{fontSize:14}}>→</span>
+              </a>
             </div>
-            <p style={{fontSize:13,color:B.gray600,lineHeight:1.6,margin:"0 0 14px",flex:1}}>
-              {p.blurb}
-            </p>
-            <a href={p.url} target="_blank" rel="noopener noreferrer"
-              style={{fontSize:13,fontWeight:600,color:B.teal,textDecoration:"none",
-                display:"inline-flex",alignItems:"center",gap:5}}>
-              Visit website <span style={{fontSize:14}}>→</span>
-            </a>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
