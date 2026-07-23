@@ -957,7 +957,7 @@ function StatCard({ label, value, sub }) {
 
 function SectionTitle({ children }) {
   return (
-    <h2 style={{fontSize:20,fontWeight:700,color:B.navy,marginBottom:4}}>
+    <h2 style={{fontSize:20,fontWeight:700,color:B.navy,marginBottom:10}}>
       {children}
     </h2>
   );
