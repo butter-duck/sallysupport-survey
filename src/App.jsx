@@ -840,7 +840,7 @@ function Welcome({ onStart, onAdmin }) {
           {[
             "Map of respondents by state & province",
             "Agency size, type, and payer source breakdowns",
-            "In what order do agencies hire for each office role? — what roles agencies hire first",
+            "In what order do agencies hire for each office role?",
             "How staffing evolves as agencies grow",
           ].map(item=>(
             <div key={item} style={{display:"flex",alignItems:"center",gap:10,
