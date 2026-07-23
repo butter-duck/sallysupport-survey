@@ -2313,8 +2313,6 @@ function Dashboard({ onBack, responses, customFindings }) {
           </p>
         </div>
 
-        <CalendlyCTA embed={false} />
-
         <KeyFindings responses={responses} customFindings={customFindings} />
 
         {/* Section 1 */}
@@ -2401,6 +2399,8 @@ function Dashboard({ onBack, responses, customFindings }) {
             )}
           </div>
         </div>
+
+        <CalendlyCTA embed={false} />
 
         {/* Section 2 */}
         <div style={{fontSize:11,fontWeight:600,color:B.gray400,letterSpacing:"1px",
