@@ -8,21 +8,28 @@ import momentumLogo from "./assets/partners/momentum.png";
 import simitreeLogo from "./assets/partners/simitree.svg";
 
 // ─── Brand tokens ───────────────────────────────────────────────
-// Sourced from the official SallySupport brand guide (Figma "Color Theory" page):
-// Outer Space (Crayola) #303847, Teal Blue #396486, Pastel Green #7DD170,
-// Baby Blue #8CCFF2, Pastel Blue #B0C2C8, Cultured #EEF2F3.
+// The seven official palette colors:
+// Outer Space #303847, Teal Blue #396486, Pastel Green #7DD170,
+// Baby Blue #8CCFF2, Sand #F2C68D, Orchid #EE8DF2, Mist #E5ECF2.
+// The neutral ramp is tinted toward Mist so grays sit in the same
+// blue family rather than reading as a separate, colder system.
 const B = {
   navy: "#303847",
   navyLight: "#3E4B5E",
   teal: "#396486",
-  tealLight: "#EEF2F3",
+  tealLight: "#E5ECF2",
+  babyBlue: "#8CCFF2",
+  sand: "#F2C68D",
+  orchid: "#EE8DF2",
   white: "#FFFFFF",
-  gray50: "#F8F9FA",
-  gray100: "#F0F1F3",
-  gray200: "#DDE0E6",
-  gray400: "#9AA0AD",
-  gray600: "#5A6170",
-  gray800: "#2C3240",
+  gray50: "#F4F7FA",
+  gray100: "#EAF0F5",
+  gray200: "#D5DFE9",
+  gray300: "#B9C6D3",
+  gray400: "#94A3B2",
+  gray500: "#6E7C8B",
+  gray600: "#56636F",
+  gray800: "#2B333F",
   accent: "#7DD170",
   accentLight: "#EAF7E8",
 };
@@ -97,9 +104,10 @@ const PARTNERS = [
 ];
 const OFFICE_ROLES = ["Sales/marketing","Executive assistant/reception","Scheduling/care coordination","Billing","HR/Recruitment","Field supervisor"];
 
-// On-brand chart palette: the 6 official brand colors, plus a derived
-// teal-blue tint/navy shade so 7-category charts still stay on-brand.
-const PIE_COLORS = ["#303847","#396486","#7DD170","#8CCFF2","#B0C2C8","#5A8CAD","#1F2530"];
+// On-brand chart palette: the official palette ordered so adjacent
+// categories stay distinguishable, plus a derived teal-blue tint for
+// the 7th slot (Mist is too light to read as a chart fill).
+const PIE_COLORS = ["#303847","#396486","#7DD170","#8CCFF2","#F2C68D","#EE8DF2","#5A8CAD"];
 
 // ─── Dummy seed data (preview only — full data lives in Supabase) ─
 const DUMMY_SEED = [{"id": "x1945nq45347", "ts": 1781589915144, "q1": "Virginia", "q2": "0\u2013500", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "1", "Billing": "1"}, "q8": "2\u20133 years", "q9": "Urban", "q10": "Field supervisor", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Billing"}, {"id": "vg0fn9xua608", "ts": 1780240251661, "q1": "New Jersey", "q2": "0\u2013500", "q3": "Franchise network", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "2"}, "q8": "2\u20133 years", "q9": "Mixed", "q10": "Executive assistant/reception", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Sales/marketing"}, {"id": "r7tcs4cc786c", "ts": 1781734202799, "q1": "Kansas", "q2": "501\u20131,000", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Hybrid", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "1", "Scheduling/care coordination": "1", "Billing": "1"}, "q8": "6\u201312 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "Yes", "q11Positions": ["Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "bcxuljyl87fe", "ts": 1781699887270, "q1": "Kentucky", "q2": "501\u20131,000", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "3"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "q2y9v86wda7d", "ts": 1782353092123, "q1": "Delaware", "q2": "1,001\u20131,500", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "Sales/marketing": 4}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Full-time", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Sales/marketing": "1", "Executive assistant/reception": "1", "Scheduling/care coordination": "4", "Billing": "1"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Field supervisor", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "HR/Recruitment"}, {"id": "14j1ripz780f", "ts": 1781167007513, "q1": "Texas", "q2": "1,001\u20131,500", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Executive assistant/reception": 2}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Hybrid", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "1", "Scheduling/care coordination": "1"}, "q8": "Less than 6 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "HR/Recruitment"}, {"id": "xfgcaqvk7684", "ts": 1781237401063, "q1": "South Dakota", "q2": "1,501\u20132,000", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Part-time", "Scheduling/care coordination": "Full-time", "Billing": "Part-time", "HR/Recruitment": "Part-time", "Field supervisor": "Full-time"}, "q7": {"Executive assistant/reception": "2", "Scheduling/care coordination": "2", "Billing": "5", "HR/Recruitment": "5", "Field supervisor": "1"}, "q8": "Less than 6 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Field supervisor"}, {"id": "2wx7ptx648d3", "ts": 1780306702926, "q1": "Delaware", "q2": "1,501\u20132,000", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Executive assistant/reception": 2, "Field supervisor": 3}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Full-time"}, "q7": {"Executive assistant/reception": "5", "Scheduling/care coordination": "2", "Field supervisor": "5"}, "q8": "6\u201312 months", "q9": "Mixed", "q10": "Billing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Executive assistant/reception"}, {"id": "lvxwqzxe1737", "ts": 1780159824875, "q1": "Rhode Island", "q2": "2,001\u20132,500", "q3": "Independent", "q4": "Private pay", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "HR/Recruitment": 3, "Sales/marketing": 4}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Not applicable"}, "q7": {"Sales/marketing": "4", "Scheduling/care coordination": "2", "Billing": "4", "HR/Recruitment": "5"}, "q8": "Less than 6 months", "q9": "Rural", "q10": "Executive assistant/reception", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "nn8ztv0532b2", "ts": 1782101729519, "q1": "New Hampshire", "q2": "2,001\u20132,500", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Full-time", "HR/Recruitment": "Part-time", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "3", "Scheduling/care coordination": "7", "Billing": "7", "HR/Recruitment": "1"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Field supervisor", "q11": "Yes", "q11Positions": ["Executive assistant/reception"], "q12Email": "", "q12Consent": false, "q13": "Sales/marketing"}, {"id": "7lxxezdua82e", "ts": 1780548870021, "q1": "Oklahoma", "q2": "2,501\u20133,000", "q3": "Franchise network", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Hybrid", "Executive assistant/reception": "Part-time", "Scheduling/care coordination": "Hybrid", "Billing": "Full-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Part-time"}, "q7": {"Sales/marketing": "3", "Executive assistant/reception": "7", "Scheduling/care coordination": "6", "Billing": "5", "HR/Recruitment": "3", "Field supervisor": "4"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Scheduling/care coordination", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "l8m1g9fk33c8", "ts": 1782180510715, "q1": "Wisconsin", "q2": "2,501\u20133,000", "q3": "Franchise network", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "HR/Recruitment": 3, "Field supervisor": 4}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Hybrid", "HR/Recruitment": "Full-time", "Field supervisor": "Part-time"}, "q7": {"Scheduling/care coordination": "6", "Billing": "2", "HR/Recruitment": "2", "Field supervisor": "7"}, "q8": "6\u201312 months", "q9": "Rural", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "v4ykadejbb47", "ts": 1781731963069, "q1": "Washington", "q2": "3,001+", "q3": "Franchise network", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Full-time", "Field supervisor": "Full-time"}, "q7": {"Sales/marketing": "2", "Executive assistant/reception": "6", "Scheduling/care coordination": "6", "Billing": "10", "HR/Recruitment": "5", "Field supervisor": "1"}, "q8": "Less than 6 months", "q9": "Mixed", "q10": "HR/Recruitment", "q11": "Yes", "q11Positions": ["Sales/marketing", "Executive assistant/reception"], "q12Email": "", "q12Consent": false, "q13": "Sales/marketing"}, {"id": "knqt3wve3180", "ts": 1781691803583, "q1": "West Virginia", "q2": "3,001+", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Part-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Hybrid"}, "q7": {"Sales/marketing": "12", "Executive assistant/reception": "8", "Scheduling/care coordination": "9", "Billing": "2", "HR/Recruitment": "7", "Field supervisor": "2"}, "q8": "2\u20133 years", "q9": "Rural", "q10": "HR/Recruitment", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Executive assistant/reception"}];
@@ -1188,19 +1196,22 @@ function USCAMap({ responses }) {
     return counts[tileName] || counts[NAME_MAP[tileName]] || 0;
   }
 
+  // Mist → Teal Blue → Outer Space, so the ramp climbs through the
+  // brand blues instead of desaturating toward a generic slate.
+  const HEAT_STOPS = ["#E5ECF2", "#396486", "#303847"];
+  const heatScale = d3.scaleLinear()
+    .domain([0, 0.6, 1]).range(HEAT_STOPS).interpolate(d3.interpolateRgb);
+
   function getColor(tileName) {
     const c = getCount(tileName);
     if (c === 0) return B.gray100;
-    const t = c / maxCount;
-    const r = Math.round(197 + (26-197)*t);
-    const g = Math.round(206 + (43-206)*t);
-    const b = Math.round(223 + (74-223)*t);
-    return `rgb(${r},${g},${b})`;
+    return heatScale(c / maxCount);
   }
 
   function getTextColor(tileName) {
     const c = getCount(tileName);
     const t = c / maxCount;
+    // Teal Blue is reached at 0.45; below that the fill is too light for white.
     return t > 0.45 ? B.white : B.gray600;
   }
 
@@ -1301,7 +1312,7 @@ function USCAMap({ responses }) {
         marginTop:8,paddingRight:PAD}}>
         <span style={{fontSize:11,color:B.gray400}}>0</span>
         <div style={{width:120,height:10,borderRadius:4,
-          background:`linear-gradient(to right, ${B.gray100}, ${B.navy})`}}/>
+          background:`linear-gradient(to right, ${HEAT_STOPS[0]}, ${HEAT_STOPS[1]} 60%, ${HEAT_STOPS[2]})`}}/>
         <span style={{fontSize:11,color:B.gray400}}>{maxCount} responses</span>
       </div>
     </div>
@@ -1543,8 +1554,8 @@ function TimelineByHours({ responses, filters }) {
     "Sales/marketing":                "#396486",
     "Billing":                        "#7DD170",
     "Executive assistant/reception":  "#8CCFF2",
-    "HR/Recruitment":                 "#B0C2C8",
-    "Field supervisor":               "#264A63",
+    "HR/Recruitment":                 "#F2C68D",
+    "Field supervisor":               "#EE8DF2",
   };
 
   function parseCount(val) {
@@ -1778,7 +1789,7 @@ function MarimekkoChart({ responses, filters, hoursFilter, setHoursFilter }) {
   const COLORS = {
     "Full-time": B.navy,
     "Part-time": B.teal,
-    "Hybrid": "#8CCFF2",
+    "Hybrid": B.babyBlue,
     "Not applicable": B.gray100,
   };
   const SEGS = ["Full-time","Part-time","Hybrid","Not applicable"];
@@ -1845,7 +1856,7 @@ function MarimekkoChart({ responses, filters, hoursFilter, setHoursFilter }) {
     <div ref={wrapRef} style={{position:"relative"}}>
       {/* Custom legend */}
       <div style={{display:"flex",flexWrap:"wrap",gap:"8px 16px",marginBottom:14}}>
-        {[["Not applicable",B.gray200],["Full-time",B.navy],["Part-time",B.teal],["Hybrid","#8CCFF2"]].map(([lbl,col])=>(
+        {[["Not applicable",B.gray200],["Full-time",B.navy],["Part-time",B.teal],["Hybrid",B.babyBlue]].map(([lbl,col])=>(
           <div key={lbl} style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:B.gray600}}>
             <div style={{width:11,height:11,borderRadius:2,background:col,flexShrink:0}}/>
             {lbl}
@@ -2674,8 +2685,8 @@ function StackedRolesChart({ responses, filters }) {
     "Sales/marketing":                "#396486",
     "Billing":                        "#7DD170",
     "Executive assistant/reception":  "#8CCFF2",
-    "HR/Recruitment":                 "#B0C2C8",
-    "Field supervisor":               "#264A63",
+    "HR/Recruitment":                 "#F2C68D",
+    "Field supervisor":               "#EE8DF2",
   };
 
   function toggle(role) {
@@ -2764,8 +2775,8 @@ function StackedRolesChart({ responses, filters }) {
             return (
               <g key={r}>
                 <line x1={PAD.l} y1={y} x2={W-PAD.r} y2={y}
-                  stroke={r===0?"#9AA0AD":"#DDE0E6"} strokeWidth={r===0?"1":"0.5"}/>
-                <text x={PAD.l-8} y={y+4} fontSize="10" fill="#9AA0AD" textAnchor="end">
+                  stroke={r===0?B.gray400:B.gray200} strokeWidth={r===0?"1":"0.5"}/>
+                <text x={PAD.l-8} y={y+4} fontSize="10" fill={B.gray400} textAnchor="end">
                   {r===0?"0%":r===1?"~1 role avg":`${r} roles avg`}
                 </text>
               </g>
@@ -3153,14 +3164,14 @@ export default function App() {
   }
 
   if (view === "loading") return (
-    <div style={{minHeight:"100vh",background:"#F8F9FA",display:"flex",
+    <div style={{minHeight:"100vh",background:B.gray50,display:"flex",
       alignItems:"center",justifyContent:"center"}}>
       <div style={{textAlign:"center"}}>
         <div style={{width:40,height:40,border:`3px solid ${B.gray200}`,
           borderTopColor:B.navy,borderRadius:"50%",
           animation:"spin 0.8s linear infinite",margin:"0 auto 16px"}}/>
         <style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style>
-        <p style={{color:"#9AA0AD",fontSize:14}}>Loading…</p>
+        <p style={{color:B.gray400,fontSize:14}}>Loading…</p>
       </div>
     </div>
   );
