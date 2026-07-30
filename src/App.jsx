@@ -2271,6 +2271,48 @@ function NCount({ n, filtered, label="responses" }) {
   );
 }
 
+// ─── Application section ─────────────────────────────────────────
+// Placeholder. The real content — concrete ways for agencies to act on the
+// benchmarks above — replaces the dashed panel below once the sample is
+// large enough for the patterns to hold up.
+function ApplicationSection({ responses }) {
+  const n = responses.length;
+  return (
+    <>
+      <div style={{fontSize:15,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+        textTransform:"uppercase",marginBottom:16,marginTop:8,
+        paddingBottom:8,borderBottom:`1px solid ${B.gray200}`}}>Putting the data to work</div>
+
+      <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
+        padding:"24px",marginBottom:48}}>
+        <SectionTitle>How agencies can apply these findings</SectionTitle>
+        <p style={{fontSize:14,color:B.gray600,marginBottom:20,lineHeight:1.6}}>
+          Practical ways to act on the benchmarks above: where your own staffing sits
+          against agencies of a similar size, which office role tends to come next,
+          and how long agencies typically wait before adding it.
+        </p>
+
+        <div style={{background:B.gray50,border:`1.5px dashed ${B.gray300}`,borderRadius:10,
+          padding:"32px 24px",textAlign:"center"}}>
+          <span style={{display:"inline-block",fontSize:11,fontWeight:600,letterSpacing:".5px",
+            textTransform:"uppercase",color:B.teal,background:B.tealLight,
+            border:`1px solid ${B.teal}`,borderRadius:20,padding:"4px 12px",marginBottom:14}}>
+            In progress
+          </span>
+          <p style={{fontSize:15,fontWeight:600,color:B.navy,marginBottom:8}}>
+            This section arrives once the sample is large enough
+          </p>
+          <p style={{fontSize:14,color:B.gray600,lineHeight:1.6,maxWidth:520,margin:"0 auto"}}>
+            Recommendations are only worth acting on if the data underneath them holds up,
+            so they'll be published once enough agencies have taken part. The report
+            currently reflects {n} response{n!==1?"s":""} — every new one sharpens the picture.
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
 // ─── Consultation CTA (Calendly) ──────────────────────────────────
 const CALENDLY_URL = "https://calendly.com/sallysupport/back-office-capacity-assessment";
 const CALENDLY_SCRIPT_SRC = "https://assets.calendly.com/assets/external/widget.js";
@@ -2736,6 +2778,8 @@ function Dashboard({ onBack, responses, customFindings }) {
         {/* Hiring flow % chart */}
 
         <CalendlyCTA />
+
+        <ApplicationSection responses={responses} />
 
         <PartnerSection />
 
