@@ -984,19 +984,24 @@ function OtherList({ label, items }) {
   );
 }
 
-function FilterBar({ filters, setFilters, responses, hoursFilter, setHoursFilter, title }) {
+// showHours adds the agency-size (weekly billable hours) row. It's left off
+// for charts that already plot hours as their own axis, where filtering to a
+// single band would collapse the chart to one column.
+function FilterBar({ filters, setFilters, responses, showHours, title }) {
   const [open, setOpen] = useState(false);
   const states = [...new Set(responses.map(r=>r.q1))].filter(Boolean).sort();
   const types = ["Franchise network","Independent"];
   const payers = ["Private pay","Medicaid","Long-term care insurance","Veterans Affairs"];
   const sel = (key,val) => setFilters(f=>({...f,[key]:f[key]===val?"":val}));
+  const clearAll = () => setFilters(f=>({...f,
+    agencyType:"",payer:"",location:"",market:"",hours:""}));
   const chip = (active) => ({
     padding:"5px 12px",borderRadius:20,fontSize:12,cursor:"pointer",border:"1.5px solid",
-    borderColor:active?B.navy:B.gray200,background:active?B.navy:B.white,
+    borderColor:active?B.navy:B.gray300,background:active?B.navy:B.white,
     color:active?B.white:B.gray600,fontWeight:active?600:400,whiteSpace:"nowrap",
     transition:"all .15s",
   });
-  const hasAnyFilter = filters.agencyType||filters.payer||filters.location||filters.market||hoursFilter;
+  const hasAnyFilter = filters.agencyType||filters.payer||filters.location||filters.market||filters.hours;
 
   // Build active filter summary for collapsed view
   const activeLabels = [
@@ -1004,7 +1009,7 @@ function FilterBar({ filters, setFilters, responses, hoursFilter, setHoursFilter
     filters.payer && filters.payer.split(" ")[0],
     filters.location,
     filters.market,
-    hoursFilter && `${hoursFilter} hrs`,
+    filters.hours && `${filters.hours} hrs`,
   ].filter(Boolean);
 
   return (
@@ -1013,14 +1018,14 @@ function FilterBar({ filters, setFilters, responses, hoursFilter, setHoursFilter
       <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
         <button
           onClick={()=>setOpen(o=>!o)}
-          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",
-            borderRadius:20,fontSize:12,cursor:"pointer",
-            border:`1.5px solid ${hasAnyFilter?B.navy:B.gray200}`,
-            background:hasAnyFilter?B.navy:B.white,
-            color:hasAnyFilter?B.white:B.gray600,
+          style={{display:"flex",alignItems:"center",gap:7,padding:"8px 16px",
+            borderRadius:20,fontSize:13,cursor:"pointer",
+            border:`1.5px solid ${hasAnyFilter?B.navy:B.teal}`,
+            background:hasAnyFilter?B.navy:B.tealLight,
+            color:hasAnyFilter?B.white:B.teal,
             fontWeight:600,transition:"all .15s"}}>
-          <span style={{fontSize:13}}>{open?"▲":"▼"}</span>
-          {hasAnyFilter ? `Filters (${activeLabels.length} active)` : "Filter"}
+          <span aria-hidden="true" style={{fontSize:11}}>{open?"▲":"▼"}</span>
+          {hasAnyFilter ? `Filters (${activeLabels.length} active)` : "Filter these results"}
         </button>
         {/* Active filter pills */}
         {!open && activeLabels.map((lbl,i)=>(
@@ -1032,7 +1037,7 @@ function FilterBar({ filters, setFilters, responses, hoursFilter, setHoursFilter
         {hasAnyFilter && !open && (
           <button style={{fontSize:12,color:B.gray400,background:"none",border:"none",
             cursor:"pointer",textDecoration:"underline",padding:0}}
-            onClick={()=>{setFilters({agencyType:"",payer:"",location:"",market:""});setHoursFilter&&setHoursFilter("");}}>
+            onClick={clearAll}>
             Clear
           </button>
         )}
@@ -1064,19 +1069,20 @@ function FilterBar({ filters, setFilters, responses, hoursFilter, setHoursFilter
             <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
               <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>State/Province</span>
               <select value={filters.location} onChange={e=>setFilters(f=>({...f,location:e.target.value}))}
-                style={{padding:"5px 10px",fontSize:12,borderRadius:6,border:`1.5px solid ${B.gray200}`,
+                style={{padding:"6px 12px",fontSize:12,borderRadius:6,cursor:"pointer",
+                  border:`1.5px solid ${filters.location?B.navy:B.gray300}`,
                   background:filters.location?B.navy:B.white,color:filters.location?B.white:B.gray600}}>
                 <option value="">All locations</option>
                 {states.map(s=><option key={s} value={s}>{s}</option>)}
               </select>
             </div>
-            {setHoursFilter && (
+            {showHours && (
               <div style={{display:"flex",flexWrap:"wrap",gap:8,alignItems:"center"}}>
                 <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>Agency size</span>
                 <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
                   {HOUR_RANGES.map(hr=>(
-                    <button key={hr} style={chip(hoursFilter===hr)}
-                      onClick={()=>setHoursFilter(hoursFilter===hr?"":hr)}>{hr} hrs</button>
+                    <button key={hr} style={chip(filters.hours===hr)}
+                      onClick={()=>sel("hours",hr)}>{hr} hrs</button>
                   ))}
                 </div>
               </div>
@@ -1095,7 +1101,7 @@ function FilterBar({ filters, setFilters, responses, hoursFilter, setHoursFilter
             {hasAnyFilter && (
               <div>
                 <button style={{...chip(false),borderColor:B.gray300,color:B.gray500,fontSize:12}}
-                  onClick={()=>{setFilters({agencyType:"",payer:"",location:"",market:""});setHoursFilter&&setHoursFilter("");}}>
+                  onClick={clearAll}>
                   Clear all filters
                 </button>
               </div>
@@ -1833,7 +1839,7 @@ function TimelineByHours({ responses, filters }) {
 
 
 // ─── Q6 bar chart ─────────────────────────────────────────────────
-function MarimekkoChart({ responses, filters, hoursFilter, setHoursFilter }) {
+function MarimekkoChart({ responses, filters }) {
   const [tooltip, setTooltip] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({x:0,y:0});
   const svgRef = useRef(null);
@@ -1867,7 +1873,7 @@ function MarimekkoChart({ responses, filters, hoursFilter, setHoursFilter }) {
     if(filters.agencyType && !r.q3.startsWith(filters.agencyType)) return false;
     if(filters.payer && !r.q4.startsWith(filters.payer)) return false;
     if(filters.location && r.q1 !== filters.location) return false;
-    if(hoursFilter && r.q2 !== hoursFilter) return false;
+    if(filters.hours && r.q2 !== filters.hours) return false;
     return true;
   });
 
@@ -2304,15 +2310,14 @@ function CalendlyCTA({ embed = true }) {
 
 // ─── Dashboard ───────────────────────────────────────────────────
 function Dashboard({ onBack, responses, customFindings }) {
-  const [filters,setFilters] = useState({agencyType:"",payer:"",location:"",market:""});
-
-    const [hoursFilter, setHoursFilter] = useState("");
+  const [filters,setFilters] = useState({agencyType:"",payer:"",location:"",market:"",hours:""});
 
   const filtered = responses.filter(r=>{
     if(filters.agencyType && !r.q3.startsWith(filters.agencyType)) return false;
     if(filters.payer && !r.q4.startsWith(filters.payer)) return false;
     if(filters.location && r.q1!==filters.location) return false;
     if(filters.market && r.q9!==filters.market) return false;
+    if(filters.hours && r.q2!==filters.hours) return false;
     return true;
   });
 
@@ -2500,7 +2505,7 @@ function Dashboard({ onBack, responses, customFindings }) {
             Average hiring sequence across all respondents (or filtered subset).
             Left = hired first, right = hired later.
           </p>
-          <FilterBar filters={filters} setFilters={setFilters} responses={responses} />
+          <FilterBar filters={filters} setFilters={setFilters} responses={responses} showHours />
           <HiringTimeline responses={responses} filtered={filtered} />
           {q5Others.length>0 && <OtherList label="hiring order" items={q5Others} />}
         </div>
@@ -2513,7 +2518,7 @@ function Dashboard({ onBack, responses, customFindings }) {
             if(filters.agencyType&&!r.q3.startsWith(filters.agencyType))return false;
             if(filters.payer&&!r.q4.startsWith(filters.payer))return false;
             if(filters.location&&r.q1!==filters.location)return false;
-            if(hoursFilter&&r.q2!==hoursFilter)return false;
+            if(filters.hours&&r.q2!==filters.hours)return false;
             return true;
           }).length} label="agencies" />
           <p style={{fontSize:14,color:B.gray600,marginBottom:16}}>
@@ -2521,9 +2526,8 @@ function Dashboard({ onBack, responses, customFindings }) {
             Segments show how those agencies staff it. Ordered least to most commonly hired.
           </p>
           <FilterBar filters={filters} setFilters={setFilters} responses={responses}
-            hoursFilter={hoursFilter} setHoursFilter={setHoursFilter}
-            title="Filter by:"/>
-          <MarimekkoChart responses={responses} filters={filters} hoursFilter={hoursFilter} setHoursFilter={setHoursFilter} />
+            showHours title="Filter by:"/>
+          <MarimekkoChart responses={responses} filters={filters} />
         </div>
 
         {/* Q8 — Time to first hire */}
@@ -2534,7 +2538,7 @@ function Dashboard({ onBack, responses, customFindings }) {
           <p style={{fontSize:14,color:B.gray600,marginBottom:16,lineHeight:1.6}}>
             The time between starting the agency and bringing on the first non-owner office staff member.
           </p>
-          <FilterBar filters={filters} setFilters={setFilters} responses={responses} title="Filter by:" />
+          <FilterBar filters={filters} setFilters={setFilters} responses={responses} showHours title="Filter by:" />
           {(() => {
             const hireData = TIME_TO_FIRST_HIRE.map(t=>({
               name:t,value:filtered.filter(r=>r.q8===t).length
@@ -2565,7 +2569,7 @@ function Dashboard({ onBack, responses, customFindings }) {
           <p style={{fontSize:14,color:B.gray600,marginBottom:16,lineHeight:1.6}}>
             The office function agencies most commonly intend to hire for next.
           </p>
-          <FilterBar filters={filters} setFilters={setFilters} responses={responses} title="Filter by:" />
+          <FilterBar filters={filters} setFilters={setFilters} responses={responses} showHours title="Filter by:" />
           {(() => {
             const nextData = [...OFFICE_ROLES,"Other"].map(role=>({
               name: role,
@@ -2603,11 +2607,13 @@ function Dashboard({ onBack, responses, customFindings }) {
             For each office role, the percentage of all responding agencies that fill it with offshore/global remote talent.
             Agencies that said "No" contribute zero to each role bar.
           </p>
-          <FilterBar filters={filters} setFilters={setFilters} responses={responses} title="Filter by:" />
+          <FilterBar filters={filters} setFilters={setFilters} responses={responses} showHours title="Filter by:" />
           {(() => {
             const answered = filtered.filter(r=>r.q11);
             const n = answered.length || 1;
-            const yesPct = Math.round(responses.filter(r=>r.q11==="Yes").length / n * 100);
+            // Numerator must come from `answered`, not all responses — mixing an
+            // unfiltered count over a filtered denominator can exceed 100%.
+            const yesPct = Math.round(answered.filter(r=>r.q11==="Yes").length / n * 100);
             const noPct = 100 - yesPct;
             // Show ALL office roles, even those with 0%
             const roleData = OFFICE_ROLES.map(role => ({
@@ -2670,7 +2676,7 @@ function Dashboard({ onBack, responses, customFindings }) {
           <p style={{fontSize:14,color:B.gray600,marginBottom:16,lineHeight:1.6}}>
             The office function most commonly cited as having the highest employee churn.
           </p>
-          <FilterBar filters={filters} setFilters={setFilters} responses={responses} title="Filter by:" />
+          <FilterBar filters={filters} setFilters={setFilters} responses={responses} showHours title="Filter by:" />
           {(() => {
             const turnoverData = [...OFFICE_ROLES,"No significant turnover in any role"].map(role=>({
               name: role,
