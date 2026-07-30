@@ -2300,12 +2300,14 @@ function ApplicationSection({ responses }) {
             In progress
           </span>
           <p style={{fontSize:15,fontWeight:600,color:B.navy,marginBottom:8}}>
-            This section arrives once the sample is large enough
+            We'll publish this section once the sample is large enough.
           </p>
           <p style={{fontSize:14,color:B.gray600,lineHeight:1.6,maxWidth:520,margin:"0 auto"}}>
-            Recommendations are only worth acting on if the data underneath them holds up,
-            so they'll be published once enough agencies have taken part. The report
-            currently reflects {n} response{n!==1?"s":""} — every new one sharpens the picture.
+            Recommendations are only worth acting on if the data underneath them holds up.
+            The report currently reflects {n} response{n!==1?"s":""} — every new one sharpens
+            the picture.
+            In the meantime, we suggest bookmarking the report and checking back as we get
+            more responses in the coming weeks.
           </p>
         </div>
       </div>
