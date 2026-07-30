@@ -1107,82 +1107,91 @@ function FilterBar({ filters, setFilters, responses, hoursFilter, setHoursFilter
   );
 }
 
-// ─── Tile grid map ───────────────────────────────────────────────
-const TILE_GRID = [
-  {row:0,col:2,abbr:"YT",name:"Yukon"},
-  {row:0,col:3,abbr:"NT",name:"Northwest Territories"},
-  {row:0,col:5,abbr:"NU",name:"Nunavut"},
-  {row:1,col:2,abbr:"BC",name:"British Columbia"},
-  {row:1,col:3,abbr:"AB",name:"Alberta"},
-  {row:1,col:4,abbr:"SK",name:"Saskatchewan"},
-  {row:1,col:5,abbr:"MB",name:"Manitoba"},
-  {row:1,col:6,abbr:"ON",name:"Ontario"},
-  {row:1,col:7,abbr:"QC",name:"Quebec"},
-  {row:1,col:8,abbr:"NL",name:"Newfoundland and Labrador"},
-  {row:2,col:8,abbr:"NB",name:"New Brunswick"},
-  {row:2,col:9,abbr:"NS",name:"Nova Scotia"},
-  {row:2,col:10,abbr:"PE",name:"Prince Edward Island"},
-  {row:3,col:0,abbr:"AK",name:"Alaska"},
-  {row:3,col:10,abbr:"ME",name:"Maine"},
-  {row:4,col:9,abbr:"VT",name:"Vermont"},
-  {row:4,col:10,abbr:"NH",name:"New Hampshire"},
-  {row:5,col:0,abbr:"WA",name:"Washington"},
-  {row:5,col:1,abbr:"ID",name:"Idaho"},
-  {row:5,col:2,abbr:"MT",name:"Montana"},
-  {row:5,col:3,abbr:"ND",name:"North Dakota"},
-  {row:5,col:4,abbr:"MN",name:"Minnesota"},
-  {row:5,col:5,abbr:"IL",name:"Illinois"},
-  {row:5,col:6,abbr:"WI",name:"Wisconsin"},
-  {row:5,col:7,abbr:"MI",name:"Michigan"},
-  {row:5,col:8,abbr:"NY",name:"New York"},
-  {row:5,col:9,abbr:"RI",name:"Rhode Island"},
-  {row:5,col:10,abbr:"MA",name:"Massachusetts"},
-  {row:6,col:0,abbr:"OR",name:"Oregon"},
-  {row:6,col:1,abbr:"NV",name:"Nevada"},
-  {row:6,col:2,abbr:"WY",name:"Wyoming"},
-  {row:6,col:3,abbr:"SD",name:"South Dakota"},
-  {row:6,col:4,abbr:"IA",name:"Iowa"},
-  {row:6,col:5,abbr:"IN",name:"Indiana"},
-  {row:6,col:6,abbr:"OH",name:"Ohio"},
-  {row:6,col:7,abbr:"PA",name:"Pennsylvania"},
-  {row:6,col:8,abbr:"NJ",name:"New Jersey"},
-  {row:6,col:9,abbr:"CT",name:"Connecticut"},
-  {row:7,col:0,abbr:"CA",name:"California"},
-  {row:7,col:1,abbr:"UT",name:"Utah"},
-  {row:7,col:2,abbr:"CO",name:"Colorado"},
-  {row:7,col:3,abbr:"NE",name:"Nebraska"},
-  {row:7,col:4,abbr:"MO",name:"Missouri"},
-  {row:7,col:5,abbr:"KY",name:"Kentucky"},
-  {row:7,col:6,abbr:"WV",name:"West Virginia"},
-  {row:7,col:7,abbr:"VA",name:"Virginia"},
-  {row:7,col:8,abbr:"MD",name:"Maryland"},
-  {row:7,col:9,abbr:"DE",name:"Delaware"},
-  {row:8,col:1,abbr:"AZ",name:"Arizona"},
-  {row:8,col:2,abbr:"NM",name:"New Mexico"},
-  {row:8,col:3,abbr:"KS",name:"Kansas"},
-  {row:8,col:4,abbr:"AR",name:"Arkansas"},
-  {row:8,col:5,abbr:"TN",name:"Tennessee"},
-  {row:8,col:6,abbr:"NC",name:"North Carolina"},
-  {row:8,col:7,abbr:"SC",name:"South Carolina"},
-  {row:8,col:8,abbr:"DC",name:"Washington D.C."},
-  {row:9,col:3,abbr:"OK",name:"Oklahoma"},
-  {row:9,col:4,abbr:"LA",name:"Louisiana"},
-  {row:9,col:5,abbr:"MS",name:"Mississippi"},
-  {row:9,col:6,abbr:"AL",name:"Alabama"},
-  {row:9,col:7,abbr:"GA",name:"Georgia"},
-  {row:10,col:3,abbr:"TX",name:"Texas"},
-  {row:10,col:9,abbr:"FL",name:"Florida"},
-  {row:10,col:0,abbr:"HI",name:"Hawaii"},
-  {row:10,col:10,abbr:"PR",name:"Puerto Rico"}
+// ─── Tile grid maps ──────────────────────────────────────────────
+// One grid per region, each on its own row/col origin so whichever tab
+// is active fills the frame instead of leaving the other region's gap.
+const US_TILE_GRID = [
+  {row:0,col:0,abbr:"AK",name:"Alaska"},
+  {row:0,col:10,abbr:"ME",name:"Maine"},
+  {row:1,col:9,abbr:"VT",name:"Vermont"},
+  {row:1,col:10,abbr:"NH",name:"New Hampshire"},
+  {row:2,col:0,abbr:"WA",name:"Washington"},
+  {row:2,col:1,abbr:"ID",name:"Idaho"},
+  {row:2,col:2,abbr:"MT",name:"Montana"},
+  {row:2,col:3,abbr:"ND",name:"North Dakota"},
+  {row:2,col:4,abbr:"MN",name:"Minnesota"},
+  {row:2,col:5,abbr:"IL",name:"Illinois"},
+  {row:2,col:6,abbr:"WI",name:"Wisconsin"},
+  {row:2,col:7,abbr:"MI",name:"Michigan"},
+  {row:2,col:8,abbr:"NY",name:"New York"},
+  {row:2,col:9,abbr:"RI",name:"Rhode Island"},
+  {row:2,col:10,abbr:"MA",name:"Massachusetts"},
+  {row:3,col:0,abbr:"OR",name:"Oregon"},
+  {row:3,col:1,abbr:"NV",name:"Nevada"},
+  {row:3,col:2,abbr:"WY",name:"Wyoming"},
+  {row:3,col:3,abbr:"SD",name:"South Dakota"},
+  {row:3,col:4,abbr:"IA",name:"Iowa"},
+  {row:3,col:5,abbr:"IN",name:"Indiana"},
+  {row:3,col:6,abbr:"OH",name:"Ohio"},
+  {row:3,col:7,abbr:"PA",name:"Pennsylvania"},
+  {row:3,col:8,abbr:"NJ",name:"New Jersey"},
+  {row:3,col:9,abbr:"CT",name:"Connecticut"},
+  {row:4,col:0,abbr:"CA",name:"California"},
+  {row:4,col:1,abbr:"UT",name:"Utah"},
+  {row:4,col:2,abbr:"CO",name:"Colorado"},
+  {row:4,col:3,abbr:"NE",name:"Nebraska"},
+  {row:4,col:4,abbr:"MO",name:"Missouri"},
+  {row:4,col:5,abbr:"KY",name:"Kentucky"},
+  {row:4,col:6,abbr:"WV",name:"West Virginia"},
+  {row:4,col:7,abbr:"VA",name:"Virginia"},
+  {row:4,col:8,abbr:"MD",name:"Maryland"},
+  {row:4,col:9,abbr:"DE",name:"Delaware"},
+  {row:5,col:1,abbr:"AZ",name:"Arizona"},
+  {row:5,col:2,abbr:"NM",name:"New Mexico"},
+  {row:5,col:3,abbr:"KS",name:"Kansas"},
+  {row:5,col:4,abbr:"AR",name:"Arkansas"},
+  {row:5,col:5,abbr:"TN",name:"Tennessee"},
+  {row:5,col:6,abbr:"NC",name:"North Carolina"},
+  {row:5,col:7,abbr:"SC",name:"South Carolina"},
+  {row:5,col:8,abbr:"DC",name:"Washington D.C."},
+  {row:6,col:3,abbr:"OK",name:"Oklahoma"},
+  {row:6,col:4,abbr:"LA",name:"Louisiana"},
+  {row:6,col:5,abbr:"MS",name:"Mississippi"},
+  {row:6,col:6,abbr:"AL",name:"Alabama"},
+  {row:6,col:7,abbr:"GA",name:"Georgia"},
+  {row:7,col:0,abbr:"HI",name:"Hawaii"},
+  {row:7,col:3,abbr:"TX",name:"Texas"},
+  {row:7,col:9,abbr:"FL",name:"Florida"},
+  {row:7,col:10,abbr:"PR",name:"Puerto Rico"}
+];
+const CA_TILE_GRID = [
+  {row:0,col:0,abbr:"YT",name:"Yukon"},
+  {row:0,col:1,abbr:"NT",name:"Northwest Territories"},
+  {row:0,col:3,abbr:"NU",name:"Nunavut"},
+  {row:1,col:0,abbr:"BC",name:"British Columbia"},
+  {row:1,col:1,abbr:"AB",name:"Alberta"},
+  {row:1,col:2,abbr:"SK",name:"Saskatchewan"},
+  {row:1,col:3,abbr:"MB",name:"Manitoba"},
+  {row:1,col:4,abbr:"ON",name:"Ontario"},
+  {row:1,col:5,abbr:"QC",name:"Quebec"},
+  {row:1,col:6,abbr:"NL",name:"Newfoundland and Labrador"},
+  {row:2,col:6,abbr:"NB",name:"New Brunswick"},
+  {row:2,col:7,abbr:"NS",name:"Nova Scotia"},
+  {row:2,col:8,abbr:"PE",name:"Prince Edward Island"}
+];
+const MAP_REGIONS = [
+  {key:"US", label:"United States", grid:US_TILE_GRID},
+  {key:"CA", label:"Canada",        grid:CA_TILE_GRID},
 ];
 
 function USCAMap({ responses }) {
+  const [region, setRegion] = useState("US");
   const [hovered, setHovered] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({x:0,y:0});
+  const tabRefs = useRef({});
 
   const counts = {};
   responses.forEach(r => { if(r.q1) counts[r.q1] = (counts[r.q1]||0)+1; });
-  const maxCount = Math.max(1, ...Object.values(counts));
 
   // Name normalisation — match survey answers to tile names
   const NAME_MAP = {
@@ -1195,6 +1204,17 @@ function USCAMap({ responses }) {
   function getCount(tileName) {
     return counts[tileName] || counts[NAME_MAP[tileName]] || 0;
   }
+
+  const activeGrid = (MAP_REGIONS.find(r => r.key === region) || MAP_REGIONS[0]).grid;
+  const regionTotals = {};
+  MAP_REGIONS.forEach(r => {
+    regionTotals[r.key] = r.grid.reduce((sum, t) => sum + getCount(t.name), 0);
+  });
+
+  // Shade against the visible region's own peak rather than a shared one:
+  // a shared scale flattens whichever region has fewer responses into a
+  // single tint. The legend restates the max on every tab switch.
+  const maxCount = Math.max(1, ...activeGrid.map(t => getCount(t.name)));
 
   // Mist → Teal Blue → Outer Space, so the ramp climbs through the
   // brand blues instead of desaturating toward a generic slate.
@@ -1219,39 +1239,79 @@ function USCAMap({ responses }) {
   const GAP = 4;
   const STEP = TILE_SIZE + GAP;
   const PAD = 8;
-  const maxRow = Math.max(...TILE_GRID.map(t=>t.row));
-  const maxCol = Math.max(...TILE_GRID.map(t=>t.col));
+  const maxRow = Math.max(...activeGrid.map(t=>t.row));
+  const maxCol = Math.max(...activeGrid.map(t=>t.col));
   const W = (maxCol + 1) * STEP + PAD * 2;
   const H = (maxRow + 1) * STEP + PAD * 2;
 
   function handleMouseMove(e, tile) {
-    const wrap = e.currentTarget.closest('div');
+    // parentElement, not closest('div') — closest() starts at the element
+    // itself, so it returned the tile and pinned the tooltip to the corner.
+    const wrap = e.currentTarget.parentElement;
     if (!wrap) return;
     const rect = wrap.getBoundingClientRect();
     setTooltipPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     setHovered(tile);
   }
 
-  // Divider row between Canada and US (between row 2 and row 3)
-  const DIVIDER_Y = PAD + 3 * STEP - GAP/2;
+  function selectRegion(key) {
+    setRegion(key);
+    setHovered(null);
+  }
+
+  // Left/right arrows move between tabs, per the standard tablist pattern.
+  function handleTabKeys(e) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    const i = MAP_REGIONS.findIndex(r => r.key === region);
+    const next = e.key === "ArrowRight"
+      ? (i + 1) % MAP_REGIONS.length
+      : (i - 1 + MAP_REGIONS.length) % MAP_REGIONS.length;
+    const nextKey = MAP_REGIONS[next].key;
+    selectRegion(nextKey);
+    if (tabRefs.current[nextKey]) tabRefs.current[nextKey].focus();
+  }
 
   return (
     <div style={{position:"relative",overflowX:"auto"}}>
-      <div style={{position:"relative",width:W,height:H,margin:"0 auto"}}>
-        {/* Canada / US label */}
-        <div style={{position:"absolute",left:PAD,top:PAD,fontSize:10,
-          fontWeight:600,color:B.gray400,letterSpacing:".5px",textTransform:"uppercase"}}>
-          Canada
-        </div>
-        <div style={{position:"absolute",left:PAD,top:DIVIDER_Y+6,fontSize:10,
-          fontWeight:600,color:B.gray400,letterSpacing:".5px",textTransform:"uppercase"}}>
-          United States
-        </div>
-        {/* Divider */}
-        <div style={{position:"absolute",left:PAD,right:PAD,top:DIVIDER_Y,
-          height:1,background:B.gray200}}/>
+      {/* Region tabs */}
+      <div role="tablist" aria-label="Map region" onKeyDown={handleTabKeys}
+        style={{display:"inline-flex",gap:3,padding:3,marginBottom:14,
+          background:B.gray100,borderRadius:10}}>
+        {MAP_REGIONS.map(r => {
+          const active = r.key === region;
+          return (
+            <button
+              key={r.key}
+              ref={el => { tabRefs.current[r.key] = el; }}
+              role="tab"
+              id={`map-tab-${r.key}`}
+              aria-selected={active}
+              aria-controls="map-tabpanel"
+              tabIndex={active ? 0 : -1}
+              onClick={() => selectRegion(r.key)}
+              style={{
+                padding:"7px 16px",borderRadius:8,border:"none",cursor:"pointer",
+                background:active?B.white:"transparent",
+                color:active?B.navy:B.gray600,
+                fontSize:13,fontWeight:active?600:500,
+                boxShadow:active?"0 1px 2px rgba(0,0,0,.08)":"none",
+                transition:"background .15s, color .15s",
+              }}
+            >
+              {r.label}
+              <span style={{marginLeft:7,fontSize:12,fontWeight:500,
+                color:active?B.gray400:B.gray300}}>
+                {regionTotals[r.key]}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
-        {TILE_GRID.map(tile => {
+      <div id="map-tabpanel" role="tabpanel" aria-labelledby={`map-tab-${region}`}
+        style={{position:"relative",width:W,height:H,margin:"0 auto"}}>
+        {activeGrid.map(tile => {
           const x = PAD + tile.col * STEP;
           const y = PAD + tile.row * STEP;
           const bg = getColor(tile.name);
@@ -1307,13 +1367,22 @@ function USCAMap({ responses }) {
         )}
       </div>
 
-      {/* Legend */}
+      {/* Legend — a region with no responses gets a note instead of a
+          gradient that would read as a real scale. */}
       <div style={{display:"flex",alignItems:"center",gap:8,justifyContent:"flex-end",
         marginTop:8,paddingRight:PAD}}>
-        <span style={{fontSize:11,color:B.gray400}}>0</span>
-        <div style={{width:120,height:10,borderRadius:4,
-          background:`linear-gradient(to right, ${HEAT_STOPS[0]}, ${HEAT_STOPS[1]} 60%, ${HEAT_STOPS[2]})`}}/>
-        <span style={{fontSize:11,color:B.gray400}}>{maxCount} responses</span>
+        {regionTotals[region] === 0 ? (
+          <span style={{fontSize:11,color:B.gray400}}>No responses from this region yet</span>
+        ) : (
+          <>
+            <span style={{fontSize:11,color:B.gray400}}>0</span>
+            <div style={{width:120,height:10,borderRadius:4,
+              background:`linear-gradient(to right, ${HEAT_STOPS[0]}, ${HEAT_STOPS[1]} 60%, ${HEAT_STOPS[2]})`}}/>
+            <span style={{fontSize:11,color:B.gray400}}>
+              {maxCount} response{maxCount!==1?"s":""}
+            </span>
+          </>
+        )}
       </div>
     </div>
   );
@@ -2340,8 +2409,9 @@ function Dashboard({ onBack, responses, customFindings }) {
           <SectionTitle>Respondents by location</SectionTitle>
           <NCount n={responses.length} label="agencies responding" />
           <p style={{fontSize:14,color:B.gray600,marginBottom:16}}>
-            Hover over a state or province to see the number of respondents.
-            Darker shading = more respondents.
+            Switch between the United States and Canada, then hover over a state
+            or province to see the number of respondents. Darker shading = more
+            respondents within the selected region.
           </p>
           <USCAMap responses={responses} />
         </div>
