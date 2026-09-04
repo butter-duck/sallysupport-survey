@@ -830,8 +830,8 @@ function Welcome({ onStart, onAdmin }) {
       <Header />
       <div style={{maxWidth:620,margin:"0 auto",padding:"64px 20px",textAlign:"center"}}>
         <div style={{display:"inline-block",background:B.tealLight,borderRadius:12,
-          padding:"10px 20px",fontSize:14,fontWeight:600,color:B.teal,marginBottom:24}}>
-          Industry Benchmarking Survey
+          padding:"12px 24px",fontSize:17,fontWeight:600,color:B.teal,marginBottom:24}}>
+          Admin Roadmap Report
         </div>
         <h1 style={{fontSize:34,fontWeight:700,color:B.navy,marginBottom:16,lineHeight:1.2}}>
           How are home care agencies building their teams?
