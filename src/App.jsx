@@ -2128,7 +2128,7 @@ function PartnerSection() {
           Our partners
         </div>
         <p style={{fontSize:14,color:"rgba(255,255,255,0.75)",lineHeight:1.6,marginBottom:24}}>
-          The Admin Road Report is made possible with the support of these organizations
+          The Admin Roadmap Report is made possible with the support of these organizations
           serving the home care industry.
         </p>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16}}>
@@ -2424,7 +2424,7 @@ function GateModal({ onClose }) {
         </h2>
 
         <p style={{fontSize:14,color:B.gray600,lineHeight:1.65,marginBottom:12}}>
-          Thank you for helping build the Admin Road Report. The full report will
+          Thank you for helping build the Admin Roadmap Report. The full report will
           unlock once we reach a target number of responses needed for meaningful
           analysis, and you'll be among the first to see it.
         </p>
@@ -2542,7 +2542,7 @@ function Dashboard({ onBack, responses, customFindings }) {
           <div style={{fontSize:13,fontWeight:600,color:B.deepTeal,letterSpacing:".5px",
             textTransform:"uppercase",marginBottom:6}}>Live results</div>
           <h1 style={{fontSize:30,fontWeight:700,color:B.navy,marginBottom:6}}>
-            The Admin Road Report
+            The Admin Roadmap Report
           </h1>
           <p style={{fontSize:15,fontStyle:"italic",color:B.deepTeal,marginBottom:10,letterSpacing:".1px"}}>
             A report for home care agencies by SallySupport
