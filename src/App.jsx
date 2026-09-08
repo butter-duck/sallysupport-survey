@@ -28,7 +28,17 @@ const B = {
   gray800: "#2B333F",
   accent: "#7DD170",
   accentLight: "#EAF7E8",
+  // Report chrome only. Chart series colours (PIE_COLORS and the
+  // navy/teal/amber/blue set) are deliberately left alone.
+  deepTeal: "#1E8A7B",
+  pageGreen: "#F6FAF9",
+  greenPill: "#E6F8F5",
 };
+
+// Responses needed before the analytical sections unlock. The number itself is
+// never shown to respondents — the gate and its modal describe it only as a
+// target, so this can move without any copy changing.
+const UNLOCK_THRESHOLD = 50;
 
 const ADMIN_PASSWORD = "sallyadmin2025";
 
@@ -999,7 +1009,7 @@ function FilterBar({ filters, setFilters, responses, showHours, title }) {
     agencyType:"",payer:"",location:"",market:"",hours:""}));
   const chip = (active) => ({
     padding:"5px 12px",borderRadius:20,fontSize:12,cursor:"pointer",border:"1.5px solid",
-    borderColor:active?B.navy:B.gray300,background:active?B.navy:B.white,
+    borderColor:active?B.deepTeal:B.gray300,background:active?B.deepTeal:B.white,
     color:active?B.white:B.gray600,fontWeight:active?600:400,whiteSpace:"nowrap",
     transition:"all .15s",
   });
@@ -1022,9 +1032,9 @@ function FilterBar({ filters, setFilters, responses, showHours, title }) {
           onClick={()=>setOpen(o=>!o)}
           style={{display:"flex",alignItems:"center",gap:7,padding:"8px 16px",
             borderRadius:20,fontSize:13,cursor:"pointer",
-            border:`1.5px solid ${hasAnyFilter?B.navy:B.teal}`,
-            background:hasAnyFilter?B.navy:B.tealLight,
-            color:hasAnyFilter?B.white:B.teal,
+            border:`1.5px solid ${B.deepTeal}`,
+            background:hasAnyFilter?B.deepTeal:B.greenPill,
+            color:hasAnyFilter?B.white:B.deepTeal,
             fontWeight:600,transition:"all .15s"}}>
           <span aria-hidden="true" style={{fontSize:11}}>{open?"▲":"▼"}</span>
           {hasAnyFilter ? `Filters (${activeLabels.length} active)` : "Filter these results"}
@@ -1032,7 +1042,7 @@ function FilterBar({ filters, setFilters, responses, showHours, title }) {
         {/* Active filter pills */}
         {!open && activeLabels.map((lbl,i)=>(
           <span key={i} style={{fontSize:12,padding:"4px 10px",borderRadius:20,
-            background:B.tealLight,color:B.teal,border:`1px solid ${B.teal}`,fontWeight:500}}>
+            background:B.greenPill,color:B.deepTeal,border:`1px solid ${B.deepTeal}`,fontWeight:500}}>
             {lbl}
           </span>
         ))}
@@ -1072,8 +1082,8 @@ function FilterBar({ filters, setFilters, responses, showHours, title }) {
               <span style={{fontSize:12,color:B.gray400,width:90,flexShrink:0}}>State/Province</span>
               <select value={filters.location} onChange={e=>setFilters(f=>({...f,location:e.target.value}))}
                 style={{padding:"6px 12px",fontSize:12,borderRadius:6,cursor:"pointer",
-                  border:`1.5px solid ${filters.location?B.navy:B.gray300}`,
-                  background:filters.location?B.navy:B.white,color:filters.location?B.white:B.gray600}}>
+                  border:`1.5px solid ${filters.location?B.deepTeal:B.gray300}`,
+                  background:filters.location?B.deepTeal:B.white,color:filters.location?B.white:B.gray600}}>
                 <option value="">All locations</option>
                 {states.map(s=><option key={s} value={s}>{s}</option>)}
               </select>
@@ -2118,7 +2128,7 @@ function PartnerSection() {
           Our partners
         </div>
         <p style={{fontSize:14,color:"rgba(255,255,255,0.75)",lineHeight:1.6,marginBottom:24}}>
-          The Home Care Office Index is made possible with the support of these organizations
+          The Admin Road Report is made possible with the support of these organizations
           serving the home care industry.
         </p>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16}}>
@@ -2133,7 +2143,7 @@ function PartnerSection() {
                 {p.blurb}
               </p>
               <a href={p.url} target="_blank" rel="noopener noreferrer"
-                style={{fontSize:13,fontWeight:600,color:B.teal,textDecoration:"none",
+                style={{fontSize:13,fontWeight:600,color:B.deepTeal,textDecoration:"none",
                   display:"inline-flex",alignItems:"center",gap:5}}>
                 Visit website <span style={{fontSize:14}}>→</span>
               </a>
@@ -2216,17 +2226,17 @@ function KeyFindings({ responses, customFindings }) {
     : findings;
 
   return (
-    <div style={{background:`linear-gradient(135deg, ${B.tealLight} 0%, ${B.white} 100%)`,
-      border:`1.5px solid ${B.teal}`,borderRadius:12,padding:"20px 24px",marginBottom:36}}>
+    <div style={{background:"linear-gradient(135deg, #E6F8F5 0%, #F0FBF9 100%)",
+      border:`1.5px solid ${B.deepTeal}`,borderRadius:12,padding:"20px 24px",marginBottom:36}}>
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-        <div style={{width:6,height:6,borderRadius:"50%",background:B.teal}}/>
-        <span style={{fontSize:13,fontWeight:700,color:B.navy,letterSpacing:".3px",textTransform:"uppercase"}}>
+        <div style={{width:6,height:6,borderRadius:"50%",background:B.deepTeal}}/>
+        <span style={{fontSize:13,fontWeight:700,color:B.deepTeal,letterSpacing:".3px",textTransform:"uppercase"}}>
           Key findings
         </span>
         <div style={{display:"flex",alignItems:"center",gap:8,marginLeft:"auto"}}>
           {customFindings && customFindings.length > 0 && (
-            <span style={{fontSize:11,color:B.teal,background:B.tealLight,
-              border:`1px solid ${B.teal}`,borderRadius:10,padding:"2px 8px"}}>
+            <span style={{fontSize:11,color:B.deepTeal,background:B.greenPill,
+              border:`1px solid ${B.deepTeal}`,borderRadius:10,padding:"2px 8px"}}>
               Edited
             </span>
           )}
@@ -2236,7 +2246,7 @@ function KeyFindings({ responses, customFindings }) {
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
         {displayFindings.map((f,i) => (
           <div key={i} style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-            <span style={{color:B.teal,fontWeight:700,fontSize:14,flexShrink:0,marginTop:1}}>→</span>
+            <span style={{color:B.deepTeal,fontWeight:700,fontSize:14,flexShrink:0,marginTop:1}}>→</span>
             <span style={{fontSize:14,color:B.gray800,lineHeight:1.5}}>{f}</span>
           </div>
         ))}
@@ -2252,9 +2262,9 @@ function NCount({ n, filtered, label="responses" }) {
   return (
     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
       <span style={{
-        background: isFiltered ? B.accentLight : B.tealLight,
-        color: isFiltered ? B.accent : B.teal,
-        border: `1px solid ${isFiltered ? B.accent : B.teal}`,
+        background: isFiltered ? B.accentLight : B.greenPill,
+        color: isFiltered ? B.accent : B.deepTeal,
+        border: `1px solid ${isFiltered ? B.accent : B.deepTeal}`,
         borderRadius:20, padding:"3px 12px",
         fontSize:13, fontWeight:600,
       }}>
@@ -2280,9 +2290,9 @@ function ApplicationSection({ responses }) {
   const n = responses.length;
   return (
     <>
-      <div style={{fontSize:15,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+      <div style={{fontSize:15,fontWeight:600,color:B.deepTeal,letterSpacing:"1px",
         textTransform:"uppercase",marginBottom:16,marginTop:8,
-        paddingBottom:8,borderBottom:`1px solid ${B.gray200}`}}>Putting the data to work</div>
+        paddingBottom:8,borderBottom:`1.5px solid ${B.deepTeal}`}}>Putting the data to work</div>
 
       <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
         padding:"24px",marginBottom:48}}>
@@ -2354,8 +2364,104 @@ function CalendlyCTA({ embed = true }) {
 }
 
 // ─── Dashboard ───────────────────────────────────────────────────
+// ─── Response gate ───────────────────────────────────────────────
+// Below UNLOCK_THRESHOLD the analytical sections stay on the page but blur,
+// so the shape of the report reads while the numbers do not. This is a
+// presentation layer only: the values are still in the DOM and in the API
+// response behind it.
+function Gated({ locked, children }) {
+  if (!locked) return <>{children}</>;
+  return (
+    <div aria-hidden="true"
+      style={{filter:"blur(7px)",opacity:0.55,pointerEvents:"none"}}>
+      {children}
+    </div>
+  );
+}
+
+function GateModal({ onClose }) {
+  // Share the site root, never window.location.href — that carries the
+  // respondent's own ?access= token, which is personal to them.
+  const shareUrl = window.location.origin;
+  const [copied, setCopied] = useState(false);
+  const inputRef = useRef(null);
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(()=>setCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable (insecure context, denied permission) — select
+      // the field so the link can still be copied by hand.
+      if (inputRef.current) { inputRef.current.focus(); inputRef.current.select(); }
+    }
+  }
+
+  return (
+    <div onClick={onClose}
+      style={{position:"fixed",inset:0,zIndex:100,background:"rgba(48,56,71,0.55)",
+        display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div onClick={e=>e.stopPropagation()} role="dialog" aria-modal="true"
+        aria-labelledby="gate-modal-title"
+        style={{background:B.white,borderRadius:14,maxWidth:520,width:"100%",
+          padding:"28px 28px 24px",position:"relative",maxHeight:"90vh",overflowY:"auto",
+          border:`1.5px solid ${B.deepTeal}`,boxShadow:"0 18px 48px rgba(48,56,71,0.28)"}}>
+        <button onClick={onClose} aria-label="Close"
+          style={{position:"absolute",top:12,right:12,width:30,height:30,borderRadius:"50%",
+            border:"none",background:"transparent",color:B.gray400,fontSize:22,
+            lineHeight:1,cursor:"pointer"}}>×</button>
+
+        <span style={{display:"inline-block",fontSize:11,fontWeight:700,letterSpacing:"1px",
+          textTransform:"uppercase",color:B.deepTeal,background:B.greenPill,
+          border:`1px solid ${B.deepTeal}`,borderRadius:20,padding:"4px 12px",marginBottom:14}}>
+          Results incoming!
+        </span>
+
+        <h2 id="gate-modal-title" style={{fontSize:22,fontWeight:700,color:B.navy,
+          marginBottom:12,lineHeight:1.3,paddingRight:20}}>
+          You're one of our earliest respondents.
+        </h2>
+
+        <p style={{fontSize:14,color:B.gray600,lineHeight:1.65,marginBottom:12}}>
+          Thank you for helping build the Admin Road Report. The full report will
+          unlock once we reach a target number of responses needed for meaningful
+          analysis, and you'll be among the first to see it.
+        </p>
+        <p style={{fontSize:14,color:B.gray600,lineHeight:1.65,marginBottom:18}}>
+          Save this link, check back as the picture fills out, and watch your inbox
+          for updates. You can help us reach the minimum threshold of responses by
+          sharing the survey link with any other home care agencies in your network.
+          Thank you!
+        </p>
+
+        <div style={{display:"flex",gap:8,marginBottom:20,flexWrap:"wrap"}}>
+          <input ref={inputRef} readOnly value={shareUrl} aria-label="Survey link"
+            onFocus={e=>e.target.select()}
+            style={{flex:"1 1 200px",minWidth:0,padding:"10px 12px",fontSize:13,
+              color:B.navy,background:B.pageGreen,borderRadius:8,
+              border:`1.5px solid ${B.gray200}`}}/>
+          <button onClick={copyLink}
+            style={{padding:"10px 18px",fontSize:13,fontWeight:600,cursor:"pointer",
+              borderRadius:8,border:`1.5px solid ${B.deepTeal}`,whiteSpace:"nowrap",
+              background:copied?B.deepTeal:B.greenPill,
+              color:copied?B.white:B.deepTeal,transition:"all .15s"}}>
+            {copied ? "Copied!" : "Copy link"}
+          </button>
+        </div>
+
+        <Btn onClick={onClose} style={{width:"100%"}}>Take a look around</Btn>
+      </div>
+    </div>
+  );
+}
+
 function Dashboard({ onBack, responses, customFindings }) {
   const [filters,setFilters] = useState({agencyType:"",payer:"",location:"",market:"",hours:""});
+  const locked = responses.length < UNLOCK_THRESHOLD;
+  // Initialised at mount, so the modal returns on every load of the report
+  // while the gate is on — deliberately not remembered between visits.
+  const [showGate,setShowGate] = useState(locked);
 
   const filtered = responses.filter(r=>{
     if(filters.agencyType && !r.q3.startsWith(filters.agencyType)) return false;
@@ -2422,7 +2528,8 @@ function Dashboard({ onBack, responses, customFindings }) {
     .map(([name,value])=>({name,value}));
 
   return (
-    <div style={{minHeight:"100vh",background:B.gray50}}>
+    <div style={{minHeight:"100vh",background:B.pageGreen}}>
+      {showGate && <GateModal onClose={()=>setShowGate(false)} />}
       <Header right={
         <div style={{display:"flex",gap:12,alignItems:"center"}}>
           <span style={{fontSize:13,color:B.gray400}}>{responses.length} responses</span>
@@ -2432,13 +2539,13 @@ function Dashboard({ onBack, responses, customFindings }) {
 
       <div style={{maxWidth:900,margin:"0 auto",padding:"36px 20px"}}>
         <div style={{marginBottom:32}}>
-          <div style={{fontSize:13,fontWeight:600,color:B.teal,letterSpacing:".5px",
+          <div style={{fontSize:13,fontWeight:600,color:B.deepTeal,letterSpacing:".5px",
             textTransform:"uppercase",marginBottom:6}}>Live results</div>
           <h1 style={{fontSize:30,fontWeight:700,color:B.navy,marginBottom:6}}>
-            Home Care Office Index
+            The Admin Road Report
           </h1>
-          <p style={{fontSize:15,fontStyle:"italic",color:B.teal,marginBottom:10,letterSpacing:".1px"}}>
-            A report by SallySupport
+          <p style={{fontSize:15,fontStyle:"italic",color:B.deepTeal,marginBottom:10,letterSpacing:".1px"}}>
+            A report for home care agencies by SallySupport
           </p>
           <p style={{fontSize:15,color:B.gray600,lineHeight:1.6}}>
             Aggregated responses from home care agency owners and operators.
@@ -2446,12 +2553,14 @@ function Dashboard({ onBack, responses, customFindings }) {
           </p>
         </div>
 
-        <KeyFindings responses={responses} customFindings={customFindings} />
+        <Gated locked={locked}>
+          <KeyFindings responses={responses} customFindings={customFindings} />
+        </Gated>
 
         {/* Section 1 */}
-        <div style={{fontSize:15,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+        <div style={{fontSize:15,fontWeight:600,color:B.deepTeal,letterSpacing:"1px",
           textTransform:"uppercase",marginBottom:16,marginTop:8,
-          paddingBottom:8,borderBottom:`1px solid ${B.gray200}`}}>Who responded</div>
+          paddingBottom:8,borderBottom:`1.5px solid ${B.deepTeal}`}}>Who responded</div>
 
         {/* Q1 Map */}
         <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
@@ -2537,10 +2646,11 @@ function Dashboard({ onBack, responses, customFindings }) {
         <CalendlyCTA embed={false} />
 
         {/* Section 2 */}
-        <div style={{fontSize:15,fontWeight:600,color:B.gray400,letterSpacing:"1px",
+        <div style={{fontSize:15,fontWeight:600,color:B.deepTeal,letterSpacing:"1px",
           textTransform:"uppercase",marginBottom:16,marginTop:8,
-          paddingBottom:8,borderBottom:`1px solid ${B.gray200}`}}>How agencies are structured today</div>
+          paddingBottom:8,borderBottom:`1.5px solid ${B.deepTeal}`}}>How agencies are structured today</div>
 
+        <Gated locked={locked}>
         {/* Q5 filtered timeline */}
         <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
           padding:"24px",marginBottom:48}}>
@@ -2746,11 +2856,14 @@ function Dashboard({ onBack, responses, customFindings }) {
           })()}
         </div>
 
-        {/* Section 3 */}
-        <div style={{fontSize:15,fontWeight:600,color:B.gray400,letterSpacing:"1px",
-          textTransform:"uppercase",marginBottom:16,marginTop:8,
-          paddingBottom:8,borderBottom:`1px solid ${B.gray200}`}}>How agencies grow</div>
+        </Gated>
 
+        {/* Section 3 */}
+        <div style={{fontSize:15,fontWeight:600,color:B.deepTeal,letterSpacing:"1px",
+          textTransform:"uppercase",marginBottom:16,marginTop:8,
+          paddingBottom:8,borderBottom:`1.5px solid ${B.deepTeal}`}}>How agencies grow</div>
+
+        <Gated locked={locked}>
         {/* Hiring progression by hours */}
         <div style={{background:B.white,border:`1.5px solid ${B.gray200}`,borderRadius:10,
           padding:"24px",marginBottom:48}}>
@@ -2778,6 +2891,8 @@ function Dashboard({ onBack, responses, customFindings }) {
           <StackedRolesChart responses={responses} filters={filters} />
         </div>
 
+        </Gated>
+
         {/* Hiring flow % chart */}
 
         <CalendlyCTA />
@@ -2788,7 +2903,7 @@ function Dashboard({ onBack, responses, customFindings }) {
 
         <div style={{textAlign:"center",padding:"20px 0",fontSize:13,color:B.gray400}}>
           Data reflects {responses.length} anonymous agency response{responses.length!==1?"s":""}.
-          Built by <a href="https://sallysupport.com" style={{color:B.teal}}>SallySupport</a>.
+          Built by <a href="https://sallysupport.com" style={{color:B.deepTeal}}>SallySupport</a>.
         </div>
       </div>
     </div>
