@@ -2,10 +2,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import * as d3 from "d3";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList } from "recharts";
 import sallysupportLogo from "./assets/sallysupport-logo.png";
-import reelHomeCareLogo from "./assets/partners/reel-home-care.png";
-import homeCareStrategyLabLogo from "./assets/partners/home-care-strategy-lab.svg";
-import momentumLogo from "./assets/partners/momentum.png";
-import simitreeLogo from "./assets/partners/simitree.svg";
 
 // ─── Brand tokens ───────────────────────────────────────────────
 // The seven official palette colors:
@@ -60,46 +56,52 @@ const MARKET_TYPES = ["Urban","Rural","Mixed"];
 const TIME_TO_FIRST_HIRE = ["Less than 6 months","6–12 months","1–2 years","2–3 years","More than 3 years","Have not yet hired"];
 
 // ─── Partners ────────────────────────────────────────────────────
-// logo: bundled locally from src/assets/partners (see imports above) so
-//       rendering doesn't depend on the partner's site staying up/unchanged.
-//       All logo art is white/light — partner sections render on a navy bar.
+// logo: served from public/partners/ so the files can be swapped without
+//       a code change, and rendering doesn't depend on the partner's site
+//       staying up/unchanged.
 //       Partners without a usable source file fall back to a styled wordmark.
 const PARTNERS = [
   {
-    name: "Vitable Health",
+    name: "Home Care Strategy Lab",
+    logo: "/partners/home-care-strategy-lab.png",
+    url: "https://www.homecarestrategylab.com",
+    blurb: "The #1 home care podcast, putting high-growth agencies under the microscope to learn what's working, what isn't, and why. New episodes every week — listen and subscribe wherever you get your podcasts.",
+  },
+  {
+    name: "Vitable",
     logo: null,
     url: "https://www.vitablehealth.com",
     blurb: "Health benefits built for hourly and caregiving workforces, with primary care at the center of every plan.",
   },
   {
     name: "Reel Home Care Consulting",
-    logo: reelHomeCareLogo,
+    logo: "/partners/reel.png",
     url: "https://reelhomecareconsulting.com",
-    blurb: "Founded by a former #1-rated agency owner, helping home care operators build profitable agencies without burning out.",
+    blurb: "Helps home care agency owners build stronger, more sustainable businesses through strategic guidance in operations, growth, marketing, team management, and client experience — helping agencies grow with purpose and build a business that supports both their goals and their lives.",
   },
   {
-    name: "Briones Consulting Group",
+    name: "Trail Angel Partners",
     logo: null,
-    url: "https://thebrionesgroup.com",
-    blurb: "Senior care growth strategists guiding private-pay agency owners through scaling, operations, and exit planning.",
+    url: "https://www.linkedin.com/in/gpumpian",
+    blurb: "Supports private-pay home care agencies and care-based businesses across the U.S. in achieving sustainable, relationship-driven growth — helping leaders scale with clarity, confidence, and connection.",
   },
   {
-    name: "Home Care Strategy Lab",
-    logo: homeCareStrategyLabLogo,
-    url: "https://www.homecarestrategylab.com",
-    blurb: "A podcast and community putting high-growth home care agencies under the microscope to find what actually works.",
-  },
-  {
-    name: "Momentum HC & Technology Consulting",
-    logo: momentumLogo,
+    name: "Momentum Healthcare & Technology Consulting",
+    logo: "/partners/momentum.png",
     url: "https://www.momentumhtconsulting.com",
-    blurb: "Independent advisory firm helping care-at-home providers align strategy, operations, and technology to scale.",
+    blurb: "A care-at-home-focused strategic consulting and leadership firm spanning provider operations, healthcare technology, transformation, and growth strategy. Momentum acts as an embedded executive partner, connecting strategy to execution so plans, technology, and teams move together.",
   },
   {
-    name: "SimiTree",
-    logo: simitreeLogo,
-    url: "https://simitreehc.com",
-    blurb: "Post-acute consulting, revenue cycle management, coding, and analytics for home health, hospice, and behavioral health.",
+    name: "Caribou",
+    logo: "/partners/caribou.png",
+    url: "https://caribou.care",
+    blurb: "The AI platform for caregiver engagement and shift booking in home care. Caribou helps over 1,000 home care locations retain caregivers, fill open shifts faster, and improve margins — turning everyday caregiver activity into automated rewards, recognition, and AI-driven shift filling.",
+  },
+  {
+    name: "Hellohire",
+    logo: "/partners/hellohire.png",
+    url: "https://www.tryhellohire.com",
+    blurb: "Helps home care agencies hire the best caregivers first. Using AI, automation, and built-in live video interviews, Hellohire instantly engages, screens, and schedules applicants so your team can meet top candidates before your competitors do.",
   },
 ];
 const OFFICE_ROLES = ["Sales/marketing","Executive assistant/reception","Scheduling/care coordination","Billing","HR/Recruitment","Field supervisor"];
