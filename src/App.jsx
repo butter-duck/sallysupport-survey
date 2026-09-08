@@ -63,7 +63,7 @@ const TIME_TO_FIRST_HIRE = ["Less than 6 months","6–12 months","1–2 years","
 const PARTNERS = [
   {
     name: "Home Care Strategy Lab",
-    logo: "/partners/home-care-strategy-lab.png",
+    logo: "/partners/home-care-strategy-lab.svg",
     url: "https://www.homecarestrategylab.com",
     blurb: "The #1 home care podcast, putting high-growth agencies under the microscope to learn what's working, what isn't, and why. New episodes every week — listen and subscribe wherever you get your podcasts.",
   },
