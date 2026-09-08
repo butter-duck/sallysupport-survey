@@ -69,7 +69,7 @@ const PARTNERS = [
   },
   {
     name: "Vitable",
-    logo: null,
+    logo: "/partners/vitable.png",
     url: "https://www.vitablehealth.com",
     blurb: "Health benefits built for hourly and caregiving workforces, with primary care at the center of every plan.",
   },
@@ -2093,8 +2093,7 @@ function PartnerStrip() {
         textTransform:"uppercase",textAlign:"center",marginBottom:20}}>
         Thanks to our partners
       </div>
-      <div style={{display:"flex",flexWrap:"wrap",gap:28,alignItems:"center",justifyContent:"center",
-        maxWidth:900,margin:"0 auto"}}>
+      <div className="partner-strip">
         {PARTNERS.map(p=>(
           <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
             title={p.name} className="partner-link"
