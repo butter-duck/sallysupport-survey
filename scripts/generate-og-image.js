@@ -72,15 +72,18 @@ async function run() {
 </body>
 </html>`;
 
+  // deviceScaleFactor 2 emits 2400x1260 from the 1200x630 layout. Link previews
+  // are shown on high-DPI screens at about twice their CSS size, so a 1x asset
+  // gets resampled on the way in and the type goes soft.
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 2 });
   await page.setContent(html, { waitUntil: 'networkidle' });
   await page.screenshot({
     path: path.join(__dirname, '..', 'public', 'og-image.png'),
     clip: { x: 0, y: 0, width: 1200, height: 630 },
   });
   await browser.close();
-  console.log('Saved public/og-image.png');
+  console.log('Saved public/og-image.png (2400x1260)');
 }
 
 run().catch((err) => {
