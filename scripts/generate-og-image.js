@@ -37,17 +37,17 @@ async function run() {
   }
   .bar { position: absolute; left:0; top:0; bottom:0; width:14px; background:#4A90C4; }
   .content { position: absolute; left:90px; top:64px; right:80px; }
-  .logo { width:240px; height:auto; display:block; margin-bottom:56px; }
+  .logo { width:240px; height:auto; display:block; margin-bottom:52px; }
   .eyebrow {
-    font-size:20px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
-    color:#4A90C4; margin-bottom:18px;
+    font-size:30px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
+    color:#4A90C4; margin-bottom:16px;
   }
   .title {
-    font-size:64px; font-weight:800; color:#1A2B4A; margin-bottom:22px; line-height:1.05;
+    font-size:64px; font-weight:800; color:#1A2B4A; margin-bottom:18px; line-height:1.05;
     max-width:760px; letter-spacing:-0.01em;
   }
-  .byline { font-size:26px; font-style:italic; font-weight:500; color:#1E8A7B; margin-bottom:14px; }
-  .body-line { font-size:21px; font-weight:400; color:#5A6170; max-width:600px; line-height:1.5; }
+  .byline { font-size:32px; font-style:italic; font-weight:500; color:#1E8A7B; margin-bottom:12px; }
+  .body-line { font-size:30px; font-weight:400; color:#5A6170; max-width:700px; line-height:1.4; }
   .chart { position:absolute; right:80px; bottom:64px; display:flex; align-items:flex-end; gap:10px; }
   .chart .col { width:30px; background:#4A90C4; }
   .chart .col.tall { background:#1A2B4A; }
@@ -72,18 +72,18 @@ async function run() {
 </body>
 </html>`;
 
-  // deviceScaleFactor 2 emits 2400x1260 from the 1200x630 layout. Link previews
-  // are shown on high-DPI screens at about twice their CSS size, so a 1x asset
-  // gets resampled on the way in and the type goes soft.
+  // Stay at 1x / 1200x630. A 2400x1260 export was tried and made the card worse:
+  // it does not change how large the type lands on screen, and LinkedIn
+  // downsamples anything past its 1200x627 target with a cheap filter.
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 2 });
+  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
   await page.setContent(html, { waitUntil: 'networkidle' });
   await page.screenshot({
     path: path.join(__dirname, '..', 'public', 'og-image.png'),
     clip: { x: 0, y: 0, width: 1200, height: 630 },
   });
   await browser.close();
-  console.log('Saved public/og-image.png (2400x1260)');
+  console.log('Saved public/og-image.png (1200x630)');
 }
 
 run().catch((err) => {

@@ -1,58 +1,56 @@
 #!/usr/bin/env python3
 """Generate public/og-image.png (1200x630).
 
-The companion generate-og-image.js is the canonical description of this card
-and renders it through a real browser. It needs Node and Playwright, neither of
-which exists on the machine this repo is maintained from, so this script draws
-the same layout with Pillow instead. It is what produced the committed PNG.
+Sizing, the short version: LinkedIn renders a feed card about 552px wide, so
+everything in a 1200px canvas lands on screen at roughly 0.46x. Type below
+~30px in the canvas arrives under 14px on screen and turns to mush.
 
-Keep the two in step: if the design changes, change both.
+Two things were tried and rejected:
+
+  * A 2400x1260 canvas. It does NOT make text bigger on screen — the on-screen
+    size is a function of the design proportions, not the pixel count — and
+    LinkedIn downsamples anything over its 1200x627 target with a cheap filter.
+    The card came back visibly worse than the 1x version. Stay at 1200x630.
+  * Leaving the original type scale. The title survived at ~29px on screen, but
+    the eyebrow and body line arrived at ~9px and were illegible.
+
+So: canvas fixed at the documented size, supporting type sized up until it
+clears ~14px on screen. The companion generate-og-image.js mirrors this and
+renders it through a real browser; keep the two in step.
 """
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import os
 
-# The card is laid out in 1200x630 design units and rendered at SCALE times
-# that. Link previews are displayed on high-DPI screens at roughly twice their
-# CSS size, so a 1x asset gets resampled and text goes soft; 2x lands sharp.
-# Every measurement below stays in design units and is multiplied on the way out.
-SCALE = 2
-W, H = 1200 * SCALE, 630 * SCALE
+W, H = 1200, 630
 BLUE, NAVY, TEAL = "#4A90C4", "#1A2B4A", "#1E8A7B"
 BODY, WHITE = "#5A6170", "#FFFFFF"
+CARD_ON_SCREEN = 552  # LinkedIn feed card width, for the report below
 
 F = "/System/Library/Fonts/Supplemental/"
-font_bold   = lambda s: ImageFont.truetype(F + "Arial Bold.ttf", s * SCALE)
-font_italic = lambda s: ImageFont.truetype(F + "Arial Italic.ttf", s * SCALE)
-font_reg    = lambda s: ImageFont.truetype(F + "Arial.ttf", s * SCALE)
-
-def u(v):
-    """design units -> output pixels"""
-    return v * SCALE
+font_bold   = lambda s: ImageFont.truetype(F + "Arial Bold.ttf", s)
+font_italic = lambda s: ImageFont.truetype(F + "Arial Italic.ttf", s)
+font_reg    = lambda s: ImageFont.truetype(F + "Arial.ttf", s)
 
 root = os.path.join(os.path.dirname(__file__), "..")
 img = Image.new("RGB", (W, H), WHITE)
 d = ImageDraw.Draw(img)
 
-# Left accent bar
-d.rectangle([0, 0, u(14) - 1, H], fill=BLUE)
+d.rectangle([0, 0, 13, H], fill=BLUE)  # left accent bar
+LEFT, TOP = 90, 64
 
-LEFT, TOP = u(90), u(64)
-
-# Logo, scaled to 240 design units wide. The source art is only 352px, so at
-# SCALE 2 this is a 1.36x upscale and the logo is the one element that cannot
-# be drawn at native resolution — it renders softer than the type beside it.
-# Flatten onto the white ground first (alpha would fringe under the filter),
-# then unsharp-mask to claw back the edge definition LANCZOS smooths away.
-# The real fix is artwork at 480px or a vector source.
+# Logo. At 240px wide from 352px source art this is a downscale, which stays
+# crisp on its own; the unsharp pass only runs if the art is ever smaller than
+# the slot, which would mean upscaling.
 logo = Image.open(os.path.join(root, "src/assets/sallysupport-logo.png")).convert("RGBA")
-lw = u(240)
+lw = 240
 lh = round(logo.height * lw / logo.width)
-logo_big = logo.resize((lw, lh), Image.LANCZOS)
+scaled = logo.resize((lw, lh), Image.LANCZOS)
 flat = Image.new("RGB", (lw, lh), WHITE)
-flat.paste(logo_big, (0, 0), logo_big)
-flat = flat.filter(ImageFilter.UnsharpMask(radius=1.4, percent=110, threshold=2))
+flat.paste(scaled, (0, 0), scaled)
+if lw > logo.width:
+    flat = flat.filter(ImageFilter.UnsharpMask(radius=1.4, percent=110, threshold=2))
 img.paste(flat, (LEFT, TOP))
-y = TOP + lh + u(56)
+y = TOP + lh + 52
 
 def tracked(draw, xy, text, font, fill, tracking):
     """Pillow has no letter-spacing, so step glyph by glyph."""
@@ -73,38 +71,41 @@ def wrap(text, font, max_w):
     if cur: lines.append(cur)
     return lines
 
-# Eyebrow
-f = font_bold(20)
-tracked(d, (LEFT, y), "LIVE INDUSTRY BENCHMARK", f, BLUE, u(3))
-y += u(24 + 18)
+sizes = {"eyebrow": 30, "title": 64, "byline": 32, "body": 30}
 
-# Title
-f = font_bold(64)
-for line in wrap("The Admin Roadmap Report", f, u(760)):
+f = font_bold(sizes["eyebrow"])
+tracked(d, (LEFT, y), "LIVE INDUSTRY BENCHMARK", f, BLUE, 4)
+y += 36 + 16
+
+f = font_bold(sizes["title"])
+for line in wrap("The Admin Roadmap Report", f, 760):
     d.text((LEFT, y), line, font=f, fill=NAVY)
-    y += u(67)
-y += u(22)
+    y += 68
+y += 18
 
-# Byline
-f = font_italic(26)
+f = font_italic(sizes["byline"])
 d.text((LEFT, y), "A report for home care agencies by SallySupport", font=f, fill=TEAL)
-y += u(31 + 14)
+y += 40 + 12
 
-# Body line
-f = font_reg(21)
-for line in wrap("How home care agencies hire, staff, and grow their office teams.", f, u(600)):
+f = font_reg(sizes["body"])
+for line in wrap("How home care agencies hire, staff, and grow their office teams.", f, 700):
     d.text((LEFT, y), line, font=f, fill=BODY)
-    y += u(32)
+    y += 42
 
 # Bar motif, bottom-right
 bars = [(44, BLUE), (66, BLUE), (52, BLUE), (104, NAVY), (74, BLUE)]
-bw, gap = u(30), u(10)
-x = W - u(80) - (len(bars) * bw + (len(bars) - 1) * gap)
-base = H - u(64)
+bw, gap = 30, 10
+x = W - 80 - (len(bars) * bw + (len(bars) - 1) * gap)
+base = H - 64
 for h, col in bars:
-    d.rectangle([x, base - u(h), x + bw, base], fill=col)
+    d.rectangle([x, base - h, x + bw, base], fill=col)
     x += bw + gap
 
 out = os.path.join(root, "public/og-image.png")
 img.save(out)
+k = CARD_ON_SCREEN / W
 print(f"Saved public/og-image.png ({img.width}x{img.height})")
+print(f"lowest text baseline: y={y}px of {H}")
+print(f"on-screen sizes at a {CARD_ON_SCREEN}px card:")
+for name, size in sizes.items():
+    print(f"  {name:<8}{size:>4}px -> {size * k:>5.1f}px")
