@@ -214,6 +214,9 @@ async function loadResponses() {
   }
   try {
     const rows = await sbFetch("/rest/v1/responses?select=id,data&order=data->>ts.asc");
+    // Zero rows is a real answer, not a failure: it means no agency has
+    // responded yet, and the report should say so. Only the catch below —
+    // where the request itself failed — substitutes sample data.
     const remote = rows.map(r => ({ id: r.id, ...r.data }));
     // Merge any local-only entries not yet in remote
     const remoteIds = new Set(remote.map(r => r.id));
@@ -267,36 +270,11 @@ async function deleteResponse(id) {
   } catch(e) { console.error("deleteResponse:", e); }
 }
 
-async function countResponses() {
-  try {
-    const res = await fetch(SUPABASE_URL + "/rest/v1/responses?select=id", {
-      headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Prefer": "count=exact" }
-    });
-    const count = res.headers.get("content-range");
-    return count ? parseInt(count.split("/")[1]) : 0;
-  } catch {
-    // Fall back to local count
-    try {
-      const raw = localStorage.getItem("ss_fallback");
-      return raw ? JSON.parse(raw).length : 0;
-    } catch { return 0; }
-  }
-}
-
-// Seed dummy data into Supabase if the table is empty
-async function seedIfEmpty() {
-  try {
-    const n = await countResponses();
-    if (n === 0) {
-      for (const r of DUMMY_SEED) {
-        await addResponse(r);
-      }
-    }
-  } catch(e) {
-    // Supabase down — DUMMY_SEED used as fallback in loadResponses
-    console.warn("seedIfEmpty skipped:", e.message);
-  }
-}
+// An empty responses table used to be filled with DUMMY_SEED on load, which
+// meant the live site could never show a true empty state — and wrote sample
+// rows into the real database to boot. DUMMY_SEED now survives only as the
+// offline fallback in loadResponses, where nothing is persisted.
+// countResponses went with it; it had no other caller.
 
 function genToken() {
   return Math.random().toString(36).slice(2,10) + Date.now().toString(36);
@@ -3388,7 +3366,6 @@ export default function App() {
 
   useEffect(() => {
     async function init() {
-      await seedIfEmpty();
       const data = await loadResponses();
       setResponses(data);
       setDbReady(true);
