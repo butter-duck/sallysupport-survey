@@ -30,6 +30,7 @@ const B = {
   accentLight: "#EAF7E8",
   // Report chrome only — CHART_PALETTE and ROLE_COLORS own the data colours.
   deepTeal: "#1E8A7B",
+  brightTeal: "#2ABFAA",
   pageGreen: "#F6FAF9",
   greenPill: "#E6F8F5",
 };
@@ -2364,7 +2365,7 @@ function CalendlyCTA({ embed = true }) {
           style={{minWidth:280,height:630}} />
       ) : (
         <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer"
-          style={{display:"inline-block",background:B.accent,color:B.navy,borderRadius:8,
+          style={{display:"inline-block",background:B.brightTeal,color:B.white,borderRadius:8,
             padding:"12px 28px",fontSize:15,fontWeight:600,textDecoration:"none"}}>
           Book a free consultation →
         </a>
