@@ -31,6 +31,8 @@ const B = {
   // Report chrome only — CHART_PALETTE and ROLE_COLORS own the data colours.
   deepTeal: "#1E8A7B",
   brightTeal: "#2ABFAA",
+  darkTeal: "#12655B",
+  tealPale: "#B9E4DD",
   pageGreen: "#F6FAF9",
   greenPill: "#E6F8F5",
 };
@@ -131,6 +133,16 @@ const ROLE_COLORS = {
   "HR/Recruitment":                 "#6C7EAA",
   "Field supervisor":               "#4A90C4",
   "Sales/marketing":                "#7ECFC3",
+};
+
+// Employment type — its own scale, deliberately separate from the role one.
+// Hoisted so the chart and its legend cannot disagree; they previously
+// disagreed about "Not applicable" (gray100 in the chart, gray200 in the key).
+const EMPLOYMENT_COLORS = {
+  "Not applicable": "#EAF0F5",
+  "Full-time":      "#12655B",
+  "Part-time":      "#2ABFAA",
+  "Hybrid":         "#7ECFC3",
 };
 
 // Role charts carry non-role catch-alls too ("Other", "No significant
@@ -1588,11 +1600,11 @@ function HiringTimeline({ responses, filtered }) {
               {/* Top accent bar */}
               <rect
                 x={lx} y={ly} width={LW} height="4"
-                rx="8" fill={B.teal}
+                rx="8" fill={B.brightTeal}
               />
               <rect
                 x={lx} y={ly + 2} width={LW} height="4"
-                fill={B.teal}
+                fill={B.brightTeal}
               />
               {/* Role name */}
               <text
@@ -1610,7 +1622,7 @@ function HiringTimeline({ responses, filtered }) {
               {/* Avg hire number */}
               <text
                 x={cardCX} y={yAvg}
-                fontSize="11.5" fill={B.teal} textAnchor="middle"
+                fontSize="11.5" fill={B.darkTeal} textAnchor="middle"
               >typically hire #{Math.round(avg)}</text>
             </g>
           );
@@ -1634,7 +1646,7 @@ function HiringTimeline({ responses, filtered }) {
           <circle
             key={role + "_dot"}
             cx={x} cy={AXIS_Y} r={DOT_R}
-            fill={B.tealLight} stroke={B.navy} strokeWidth="2.5"
+            fill={B.tealPale} stroke={B.navy} strokeWidth="2.5"
           />
         ))}
 
@@ -1884,12 +1896,7 @@ function MarimekkoChart({ responses, filters }) {
     "Billing",
     "Scheduling/\ncare coord.",
   ];
-  const COLORS = {
-    "Full-time": B.navy,
-    "Part-time": B.teal,
-    "Hybrid": B.babyBlue,
-    "Not applicable": B.gray100,
-  };
+  const COLORS = EMPLOYMENT_COLORS;
   const SEGS = ["Full-time","Part-time","Hybrid","Not applicable"];
 
   const filtered = responses.filter(r => {
@@ -1954,9 +1961,10 @@ function MarimekkoChart({ responses, filters }) {
     <div ref={wrapRef} style={{position:"relative"}}>
       {/* Custom legend */}
       <div style={{display:"flex",flexWrap:"wrap",gap:"8px 16px",marginBottom:14}}>
-        {[["Not applicable",B.gray200],["Full-time",B.navy],["Part-time",B.teal],["Hybrid",B.babyBlue]].map(([lbl,col])=>(
+        {["Not applicable","Full-time","Part-time","Hybrid"].map(lbl=>(
           <div key={lbl} style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:B.gray600}}>
-            <div style={{width:11,height:11,borderRadius:2,background:col,flexShrink:0}}/>
+            <div style={{width:11,height:11,borderRadius:2,
+              background:EMPLOYMENT_COLORS[lbl],flexShrink:0}}/>
             {lbl}
           </div>
         ))}
@@ -2062,7 +2070,7 @@ function MarimekkoChart({ responses, filters }) {
                   {lines[1]}
                 </text>
               )}
-              <text x={tx+16} y={lines[1]?ty+40:ty+28} fontSize="10" fill={B.tealLight}>
+              <text x={tx+16} y={lines[1]?ty+40:ty+28} fontSize="10" fill={B.tealPale}>
                 {tooltip.seg}: {tooltip.pct}% · {tooltip.hired}% hired
               </text>
             </g>
@@ -2314,11 +2322,12 @@ function ApplicationSection({ responses }) {
           and how long agencies typically wait before adding it.
         </p>
 
-        <div style={{background:B.gray50,border:`1.5px dashed ${B.gray300}`,borderRadius:10,
+        <div style={{background:"linear-gradient(135deg, #E6F8F5 0%, #F0FBF9 100%)",
+          border:`1.5px dashed ${B.deepTeal}`,borderRadius:10,
           padding:"32px 24px",textAlign:"center"}}>
           <span style={{display:"inline-block",fontSize:11,fontWeight:600,letterSpacing:".5px",
-            textTransform:"uppercase",color:B.teal,background:B.tealLight,
-            border:`1px solid ${B.teal}`,borderRadius:20,padding:"4px 12px",marginBottom:14}}>
+            textTransform:"uppercase",color:B.deepTeal,background:B.greenPill,
+            border:`1px solid ${B.deepTeal}`,borderRadius:20,padding:"4px 12px",marginBottom:14}}>
             In progress
           </span>
           <p style={{fontSize:15,fontWeight:600,color:B.navy,marginBottom:8}}>
@@ -2793,9 +2802,9 @@ function Dashboard({ onBack, responses, customFindings }) {
               <div>
                 {/* Yes/No summary pills */}
                 <div style={{display:"flex",gap:12,marginBottom:24,flexWrap:"wrap"}}>
-                  <div style={{background:B.tealLight,border:`1.5px solid ${B.teal}`,
+                  <div style={{background:B.greenPill,border:`1.5px solid ${B.deepTeal}`,
                     borderRadius:8,padding:"12px 20px",textAlign:"center",minWidth:140}}>
-                    <div style={{fontSize:28,fontWeight:700,color:B.teal}}>{yesPct}%</div>
+                    <div style={{fontSize:28,fontWeight:700,color:B.darkTeal}}>{yesPct}%</div>
                     <div style={{fontSize:13,color:B.gray600,marginTop:4}}>employ offshore/global remote talent</div>
                   </div>
                   <div style={{background:B.gray50,border:`1.5px solid ${B.gray200}`,
@@ -2820,7 +2829,7 @@ function Dashboard({ onBack, responses, customFindings }) {
                     <YAxis type="category" dataKey="name"
                       tick={{fontSize:12,fill:B.navy}} width={205}/>
                     <Tooltip formatter={v=>`${v}%`}/>
-                    <Bar dataKey="pct" name="% of agencies" fill={B.teal}
+                    <Bar dataKey="pct" name="% of agencies" fill={B.brightTeal}
                       radius={[0,4,4,0]}>
                       <LabelList dataKey="pct" position="right"
                         formatter={v=>`${v}%`}
