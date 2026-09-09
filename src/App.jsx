@@ -118,6 +118,11 @@ const PARTNERS = [
 ];
 const OFFICE_ROLES = ["Sales/marketing","Executive assistant/reception","Scheduling/care coordination","Billing","HR/Recruitment","Field supervisor"];
 
+// Referral sources are derived from PARTNERS rather than listed again, so
+// adding or dropping a partner updates the survey with it. Answers are stored
+// as the partner's name, so a later roster change never rewrites old responses.
+const REFERRAL_SOURCES = ["SallySupport", ...PARTNERS.map(p => p.name), "Other"];
+
 // Category charts — anything whose slices are not office roles. Ordered so
 // navy and teal always lead, and so adjacent slices stay distinguishable.
 const CHART_PALETTE = ["#1A2B4A", "#2ABFAA", "#F4A623", "#6C7EAA", "#4A90C4", "#7ECFC3"];
@@ -757,10 +762,34 @@ function Q13({ value, onChange }) {
 }
 
 
+// Q14 — Referral source
+function Q14({ value, onChange, otherText, onOtherText }) {
+  return (
+    <>
+      <QLabel>Where did you hear about the survey?</QLabel>
+      <QSub>Let us know who pointed you here so we can thank them.</QSub>
+      <select value={value} onChange={e=>onChange(e.target.value)}
+        style={{width:"100%",padding:"12px 16px",fontSize:15,border:`1.5px solid ${value?B.navy:B.gray200}`,
+          borderRadius:8,background:B.white,color:value?B.navy:B.gray400,appearance:"none",
+          backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231A2B4A' stroke-width='1.5' fill='none'/%3E%3C/svg%3E")`,
+          backgroundRepeat:"no-repeat",backgroundPosition:"right 14px center"}}>
+        <option value="">Select an option…</option>
+        {REFERRAL_SOURCES.map(src=><option key={src} value={src}>{src}</option>)}
+      </select>
+      {value==="Other" && (
+        <input value={otherText} onChange={e=>onOtherText(e.target.value)}
+          placeholder="Please tell us where…"
+          style={{marginTop:12,width:"100%",padding:"12px 16px",fontSize:15,
+            border:`1.5px solid ${B.navy}`,borderRadius:8,boxSizing:"border-box"}}/>
+      )}
+    </>
+  );
+}
+
 // ─── Survey flow ─────────────────────────────────────────────────
 function Survey({ onComplete }) {
   const [step,setStep] = useState(1);
-  const TOTAL = 13;
+  const TOTAL = 14;
   const [q1,setQ1] = useState("");
   const [q2,setQ2] = useState("");
   const [q3,setQ3] = useState("");  const [q3Other,setQ3Other] = useState("");
@@ -774,6 +803,7 @@ function Survey({ onComplete }) {
   const [q11,setQ11] = useState("");  const [q11Positions,setQ11Positions] = useState([]);
   const [q12Email,setQ12Email] = useState("");  const [q12Consent,setQ12Consent] = useState(false);
   const [q13,setQ13] = useState("");
+  const [q14,setQ14] = useState("");  const [q14Other,setQ14Other] = useState("");
 
   const canNext = [
     ()=>!!q1,
@@ -788,6 +818,7 @@ function Survey({ onComplete }) {
     ()=>!!q10&&(q10!=="Other"||q10Other.trim()),
     ()=>!!q11,
     ()=>!!q13,
+    ()=>!!q14&&(q14!=="Other"||q14Other.trim()),
     ()=>!!q12Email&&q12Email.includes("@")&&q12Email.includes("."),
   ][step-1]?.();
 
@@ -813,6 +844,7 @@ function Survey({ onComplete }) {
       q11, q11Positions,
       q12Email, q12Consent,
       q13,
+      q14: q14==="Other"?`Other: ${q14Other}`:q14,
     };
     await addResponse(response);
     localStorage.setItem(TOKEN_KEY, token);
@@ -832,6 +864,7 @@ function Survey({ onComplete }) {
     <Q10 value={q10} onChange={setQ10} otherText={q10Other} onOtherText={setQ10Other}/>,
     <Q11 value={q11} onChange={setQ11} positions={q11Positions} onPositions={setQ11Positions}/>,
     <Q13 value={q13} onChange={setQ13}/>,
+    <Q14 value={q14} onChange={setQ14} otherText={q14Other} onOtherText={setQ14Other}/>,
     <Q12 email={q12Email} onEmail={setQ12Email} consent={q12Consent} onConsent={setQ12Consent}/>,
   ];
 
@@ -3342,6 +3375,8 @@ function AdminPanel() {
                 <div><span style={{color:B.gray400}}>Payer: </span><strong>{r.q4}</strong></div>
                 <div><span style={{color:B.gray400}}>Roles hired: </span>
                   <strong>{OFFICE_ROLES.filter(role=>r.q5[role]>0).length}</strong></div>
+                <div><span style={{color:B.gray400}}>Heard via: </span>
+                  <strong>{r.q14 || "—"}</strong></div>
               </div>
             )}
           </div>
