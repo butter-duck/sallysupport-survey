@@ -28,8 +28,7 @@ const B = {
   gray800: "#2B333F",
   accent: "#7DD170",
   accentLight: "#EAF7E8",
-  // Report chrome only. Chart series colours (PIE_COLORS and the
-  // navy/teal/amber/blue set) are deliberately left alone.
+  // Report chrome only — CHART_PALETTE and ROLE_COLORS own the data colours.
   deepTeal: "#1E8A7B",
   pageGreen: "#F6FAF9",
   greenPill: "#E6F8F5",
@@ -116,10 +115,28 @@ const PARTNERS = [
 ];
 const OFFICE_ROLES = ["Sales/marketing","Executive assistant/reception","Scheduling/care coordination","Billing","HR/Recruitment","Field supervisor"];
 
-// On-brand chart palette: the official palette ordered so adjacent
-// categories stay distinguishable, plus a derived teal-blue tint for
-// the 7th slot (Mist is too light to read as a chart fill).
-const PIE_COLORS = ["#303847","#396486","#7DD170","#8CCFF2","#F2C68D","#EE8DF2","#5A8CAD"];
+// Category charts — anything whose slices are not office roles. Ordered so
+// navy and teal always lead, and so adjacent slices stay distinguishable.
+const CHART_PALETTE = ["#1A2B4A", "#2ABFAA", "#F4A623", "#6C7EAA", "#4A90C4", "#7ECFC3"];
+
+// Office-role scale. Defined once at module scope and shared by every
+// role-based chart, so a role keeps the same colour wherever it appears —
+// that consistency is the whole point, and two local copies had already
+// drifted out of sync once.
+const ROLE_COLORS = {
+  "Scheduling/care coordination":   "#1A2B4A",
+  "Billing":                        "#2ABFAA",
+  "Executive assistant/reception":  "#F4A623",
+  "HR/Recruitment":                 "#6C7EAA",
+  "Field supervisor":               "#4A90C4",
+  "Sales/marketing":                "#7ECFC3",
+};
+
+// Role charts carry non-role catch-alls too ("Other", "No significant
+// turnover in any role"); those read as neutral rather than as a seventh role.
+function roleColor(name) {
+  return ROLE_COLORS[name] || B.gray400;
+}
 
 // ─── Dummy seed data (preview only — full data lives in Supabase) ─
 const DUMMY_SEED = [{"id": "x1945nq45347", "ts": 1781589915144, "q1": "Virginia", "q2": "0\u2013500", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "1", "Billing": "1"}, "q8": "2\u20133 years", "q9": "Urban", "q10": "Field supervisor", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Billing"}, {"id": "vg0fn9xua608", "ts": 1780240251661, "q1": "New Jersey", "q2": "0\u2013500", "q3": "Franchise network", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "2"}, "q8": "2\u20133 years", "q9": "Mixed", "q10": "Executive assistant/reception", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Sales/marketing"}, {"id": "r7tcs4cc786c", "ts": 1781734202799, "q1": "Kansas", "q2": "501\u20131,000", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Hybrid", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "1", "Scheduling/care coordination": "1", "Billing": "1"}, "q8": "6\u201312 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "Yes", "q11Positions": ["Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "bcxuljyl87fe", "ts": 1781699887270, "q1": "Kentucky", "q2": "501\u20131,000", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Scheduling/care coordination": "3"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "q2y9v86wda7d", "ts": 1782353092123, "q1": "Delaware", "q2": "1,001\u20131,500", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "Sales/marketing": 4}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Full-time", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Sales/marketing": "1", "Executive assistant/reception": "1", "Scheduling/care coordination": "4", "Billing": "1"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Field supervisor", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "HR/Recruitment"}, {"id": "14j1ripz780f", "ts": 1781167007513, "q1": "Texas", "q2": "1,001\u20131,500", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Executive assistant/reception": 2}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Hybrid", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "1", "Scheduling/care coordination": "1"}, "q8": "Less than 6 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "HR/Recruitment"}, {"id": "xfgcaqvk7684", "ts": 1781237401063, "q1": "South Dakota", "q2": "1,501\u20132,000", "q3": "Independent", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Part-time", "Scheduling/care coordination": "Full-time", "Billing": "Part-time", "HR/Recruitment": "Part-time", "Field supervisor": "Full-time"}, "q7": {"Executive assistant/reception": "2", "Scheduling/care coordination": "2", "Billing": "5", "HR/Recruitment": "5", "Field supervisor": "1"}, "q8": "Less than 6 months", "q9": "Urban", "q10": "Sales/marketing", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Field supervisor"}, {"id": "2wx7ptx648d3", "ts": 1780306702926, "q1": "Delaware", "q2": "1,501\u20132,000", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Executive assistant/reception": 2, "Field supervisor": 3}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Not applicable", "HR/Recruitment": "Not applicable", "Field supervisor": "Full-time"}, "q7": {"Executive assistant/reception": "5", "Scheduling/care coordination": "2", "Field supervisor": "5"}, "q8": "6\u201312 months", "q9": "Mixed", "q10": "Billing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Executive assistant/reception"}, {"id": "lvxwqzxe1737", "ts": 1780159824875, "q1": "Rhode Island", "q2": "2,001\u20132,500", "q3": "Independent", "q4": "Private pay", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "HR/Recruitment": 3, "Sales/marketing": 4}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Not applicable"}, "q7": {"Sales/marketing": "4", "Scheduling/care coordination": "2", "Billing": "4", "HR/Recruitment": "5"}, "q8": "Less than 6 months", "q9": "Rural", "q10": "Executive assistant/reception", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "nn8ztv0532b2", "ts": 1782101729519, "q1": "New Hampshire", "q2": "2,001\u20132,500", "q3": "Independent", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Part-time", "Billing": "Full-time", "HR/Recruitment": "Part-time", "Field supervisor": "Not applicable"}, "q7": {"Executive assistant/reception": "3", "Scheduling/care coordination": "7", "Billing": "7", "HR/Recruitment": "1"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Field supervisor", "q11": "Yes", "q11Positions": ["Executive assistant/reception"], "q12Email": "", "q12Consent": false, "q13": "Sales/marketing"}, {"id": "7lxxezdua82e", "ts": 1780548870021, "q1": "Oklahoma", "q2": "2,501\u20133,000", "q3": "Franchise network", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Hybrid", "Executive assistant/reception": "Part-time", "Scheduling/care coordination": "Hybrid", "Billing": "Full-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Part-time"}, "q7": {"Sales/marketing": "3", "Executive assistant/reception": "7", "Scheduling/care coordination": "6", "Billing": "5", "HR/Recruitment": "3", "Field supervisor": "4"}, "q8": "1\u20132 years", "q9": "Urban", "q10": "Scheduling/care coordination", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "l8m1g9fk33c8", "ts": 1782180510715, "q1": "Wisconsin", "q2": "2,501\u20133,000", "q3": "Franchise network", "q4": "Medicaid", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "HR/Recruitment": 3, "Field supervisor": 4}, "q5Other": "", "q6": {"Sales/marketing": "Not applicable", "Executive assistant/reception": "Not applicable", "Scheduling/care coordination": "Full-time", "Billing": "Hybrid", "HR/Recruitment": "Full-time", "Field supervisor": "Part-time"}, "q7": {"Scheduling/care coordination": "6", "Billing": "2", "HR/Recruitment": "2", "Field supervisor": "7"}, "q8": "6\u201312 months", "q9": "Rural", "q10": "Sales/marketing", "q11": "No", "q11Positions": [], "q12Email": "", "q12Consent": false, "q13": "Scheduling/care coordination"}, {"id": "v4ykadejbb47", "ts": 1781731963069, "q1": "Washington", "q2": "3,001+", "q3": "Franchise network", "q4": "Long-term care insurance", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Full-time", "HR/Recruitment": "Full-time", "Field supervisor": "Full-time"}, "q7": {"Sales/marketing": "2", "Executive assistant/reception": "6", "Scheduling/care coordination": "6", "Billing": "10", "HR/Recruitment": "5", "Field supervisor": "1"}, "q8": "Less than 6 months", "q9": "Mixed", "q10": "HR/Recruitment", "q11": "Yes", "q11Positions": ["Sales/marketing", "Executive assistant/reception"], "q12Email": "", "q12Consent": false, "q13": "Sales/marketing"}, {"id": "knqt3wve3180", "ts": 1781691803583, "q1": "West Virginia", "q2": "3,001+", "q3": "Independent", "q4": "Veterans Affairs", "q5": {"Scheduling/care coordination": 1, "Billing": 2, "Executive assistant/reception": 3, "HR/Recruitment": 4, "Field supervisor": 5, "Sales/marketing": 6}, "q5Other": "", "q6": {"Sales/marketing": "Full-time", "Executive assistant/reception": "Full-time", "Scheduling/care coordination": "Full-time", "Billing": "Part-time", "HR/Recruitment": "Hybrid", "Field supervisor": "Hybrid"}, "q7": {"Sales/marketing": "12", "Executive assistant/reception": "8", "Scheduling/care coordination": "9", "Billing": "2", "HR/Recruitment": "7", "Field supervisor": "2"}, "q8": "2\u20133 years", "q9": "Rural", "q10": "HR/Recruitment", "q11": "Yes", "q11Positions": ["Scheduling/care coordination", "Sales/marketing"], "q12Email": "", "q12Consent": false, "q13": "Executive assistant/reception"}];
@@ -1234,9 +1251,9 @@ function USCAMap({ responses }) {
   // single tint. The legend restates the max on every tab switch.
   const maxCount = Math.max(1, ...activeGrid.map(t => getCount(t.name)));
 
-  // Mist → Teal Blue → Outer Space, so the ramp climbs through the
-  // brand blues instead of desaturating toward a generic slate.
-  const HEAT_STOPS = ["#E5ECF2", "#396486", "#303847"];
+  // Pale green → mid → full teal, matching the report's greener chrome.
+  // Zero-count tiles stay grey so "none" never reads as "a little".
+  const HEAT_STOPS = ["#B9E4DD", "#6FCFC0", "#2ABFAA"];
   const heatScale = d3.scaleLinear()
     .domain([0, 0.6, 1]).range(HEAT_STOPS).interpolate(d3.interpolateRgb);
 
@@ -1248,9 +1265,11 @@ function USCAMap({ responses }) {
 
   function getTextColor(tileName) {
     const c = getCount(tileName);
-    const t = c / maxCount;
-    // Teal Blue is reached at 0.45; below that the fill is too light for white.
-    return t > 0.45 ? B.white : B.gray600;
+    // The green ramp tops out at #2ABFAA, far too light to carry white text
+    // (2.3:1). Navy clears 4.5:1 against every step of it — 8.5:1 at the pale
+    // end, 5.1:1 at full — so shaded tiles all take navy, and only the grey
+    // zero-count tiles keep the lighter grey.
+    return c === 0 ? B.gray600 : B.navy;
   }
 
   const TILE_SIZE = 52;
@@ -1636,15 +1655,6 @@ function HiringTimeline({ responses, filtered }) {
 
 // ─── Timeline by billable hours ───────────────────────────────────
 function TimelineByHours({ responses, filters }) {
-  const ROLE_COLORS = {
-    "Scheduling/care coordination":   "#303847",
-    "Sales/marketing":                "#396486",
-    "Billing":                        "#7DD170",
-    "Executive assistant/reception":  "#8CCFF2",
-    "HR/Recruitment":                 "#F2C68D",
-    "Field supervisor":               "#EE8DF2",
-  };
-
   function parseCount(val) {
     if (!val || val === "Not applicable") return null;
     if (val === "15+") return 16;
@@ -2585,7 +2595,7 @@ function Dashboard({ onBack, responses, customFindings }) {
               <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
                 <Pie data={hourData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
                   label={({name,percent})=>`${Math.round(percent*100)}%`} labelLine={{stroke:B.gray200}}>
-                  {hourData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                  {hourData.map((_,i)=><Cell key={i} fill={CHART_PALETTE[i%CHART_PALETTE.length]}/>)}
                 </Pie>
                 <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
               </PieChart>
@@ -2600,7 +2610,7 @@ function Dashboard({ onBack, responses, customFindings }) {
               <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
                 <Pie data={typeData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
                   label={({name,percent})=>`${Math.round(percent*100)}%`} labelLine={{stroke:B.gray200}}>
-                  {typeData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                  {typeData.map((_,i)=><Cell key={i} fill={CHART_PALETTE[i%CHART_PALETTE.length]}/>)}
                 </Pie>
                 <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
               </PieChart>
@@ -2616,7 +2626,7 @@ function Dashboard({ onBack, responses, customFindings }) {
               <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
                 <Pie data={payerData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
                   label={({name,percent})=>`${Math.round(percent*100)}%`} labelLine={{stroke:B.gray200}}>
-                  {payerData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                  {payerData.map((_,i)=><Cell key={i} fill={CHART_PALETTE[i%CHART_PALETTE.length]}/>)}
                 </Pie>
                 <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
               </PieChart>
@@ -2634,7 +2644,7 @@ function Dashboard({ onBack, responses, customFindings }) {
               <PieChart margin={{top:10,right:20,left:20,bottom:10}}>
                 <Pie data={marketTypeData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
                   label={({name,percent})=>`${Math.round(percent*100)}%`} labelLine={{stroke:B.gray200}}>
-                  {marketTypeData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                  {marketTypeData.map((_,i)=><Cell key={i} fill={CHART_PALETTE[i%CHART_PALETTE.length]}/>)}
                 </Pie>
                 <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
               </PieChart>
@@ -2707,7 +2717,7 @@ function Dashboard({ onBack, responses, customFindings }) {
                   <Pie data={hireData}
                     cx="50%" cy="50%" outerRadius={90} dataKey="value"
                     label={({name,percent})=>`${Math.round(percent*100)}%`} labelLine={{stroke:B.gray200}}>
-                    {hireData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                    {hireData.map((_,i)=><Cell key={i} fill={CHART_PALETTE[i%CHART_PALETTE.length]}/>)}
                   </Pie>
                   <Tooltip /><Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
                 </PieChart>
@@ -2740,7 +2750,7 @@ function Dashboard({ onBack, responses, customFindings }) {
                   <Pie data={nextData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
                     label={({name,percent})=>`${Math.round(percent*100)}%`}
                     labelLine={{stroke:B.gray200}}>
-                    {nextData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                    {nextData.map((d,i)=><Cell key={i} fill={roleColor(d.name)}/>)}
                   </Pie>
                   <Tooltip formatter={(v,name)=>[`${v} agencies`,name]}/>
                   <Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
@@ -2846,7 +2856,7 @@ function Dashboard({ onBack, responses, customFindings }) {
                   <Pie data={turnoverData} cx="50%" cy="50%" outerRadius={72} dataKey="value"
                     label={({name,percent})=>`${Math.round(percent*100)}%`}
                     labelLine={{stroke:B.gray200}}>
-                    {turnoverData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                    {turnoverData.map((d,i)=><Cell key={i} fill={roleColor(d.name)}/>)}
                   </Pie>
                   <Tooltip formatter={(v,name)=>[`${v} agencies`,name]}/>
                   <Legend wrapperStyle={{fontSize:11,paddingTop:4}} iconSize={10} verticalAlign="bottom" layout="horizontal"/>
@@ -2917,15 +2927,6 @@ function StackedRolesChart({ responses, filters }) {
   const [tooltipPos, setTooltipPos] = useState({x:0,y:0});
   const [hidden, setHidden] = useState(new Set());
   const svgRef = useRef(null);
-
-  const ROLE_COLORS = {
-    "Scheduling/care coordination":   "#303847",
-    "Sales/marketing":                "#396486",
-    "Billing":                        "#7DD170",
-    "Executive assistant/reception":  "#8CCFF2",
-    "HR/Recruitment":                 "#F2C68D",
-    "Field supervisor":               "#EE8DF2",
-  };
 
   function toggle(role) {
     setHidden(prev => {
