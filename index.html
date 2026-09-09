@@ -7,9 +7,13 @@
     <meta name="description" content="A live industry benchmark on how home care agencies hire, staff, and grow their office teams." />
     <link rel="icon" type="image/png" href="/favicon.png" />
 
+    <!-- ?v= on the image URL is a cache-buster. LinkedIn, Facebook and Slack
+         cache a scraped image for days against its exact URL, so a redeploy
+         alone will not dislodge a stale copy — bump this whenever the card art
+         changes, and re-scrape the page in LinkedIn's Post Inspector. -->
     <meta property="og:title" content="The Admin Roadmap Report by SallySupport" />
     <meta property="og:description" content="A live industry benchmark on how home care agencies hire, staff, and grow their office teams." />
-    <meta property="og:image" content="https://sallysupport-survey.vercel.app/og-image.png" />
+    <meta property="og:image" content="https://sallysupport-survey.vercel.app/og-image.png?v=2" />
     <meta property="og:image:width" content="2400" />
     <meta property="og:image:height" content="1260" />
     <meta property="og:url" content="https://sallysupport-survey.vercel.app/" />
@@ -18,7 +22,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="The Admin Roadmap Report by SallySupport" />
     <meta name="twitter:description" content="A live industry benchmark on how home care agencies hire, staff, and grow their office teams." />
-    <meta name="twitter:image" content="https://sallysupport-survey.vercel.app/og-image.png" />
+    <meta name="twitter:image" content="https://sallysupport-survey.vercel.app/og-image.png?v=2" />
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F4F7FA; }

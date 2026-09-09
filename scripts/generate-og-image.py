@@ -8,7 +8,7 @@ the same layout with Pillow instead. It is what produced the committed PNG.
 
 Keep the two in step: if the design changes, change both.
 """
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import os
 
 # The card is laid out in 1200x630 design units and rendered at SCALE times
@@ -38,11 +38,20 @@ d.rectangle([0, 0, u(14) - 1, H], fill=BLUE)
 
 LEFT, TOP = u(90), u(64)
 
-# Logo, scaled to 240px wide
+# Logo, scaled to 240 design units wide. The source art is only 352px, so at
+# SCALE 2 this is a 1.36x upscale and the logo is the one element that cannot
+# be drawn at native resolution — it renders softer than the type beside it.
+# Flatten onto the white ground first (alpha would fringe under the filter),
+# then unsharp-mask to claw back the edge definition LANCZOS smooths away.
+# The real fix is artwork at 480px or a vector source.
 logo = Image.open(os.path.join(root, "src/assets/sallysupport-logo.png")).convert("RGBA")
 lw = u(240)
 lh = round(logo.height * lw / logo.width)
-img.paste(logo.resize((lw, lh), Image.LANCZOS), (LEFT, TOP), logo.resize((lw, lh), Image.LANCZOS))
+logo_big = logo.resize((lw, lh), Image.LANCZOS)
+flat = Image.new("RGB", (lw, lh), WHITE)
+flat.paste(logo_big, (0, 0), logo_big)
+flat = flat.filter(ImageFilter.UnsharpMask(radius=1.4, percent=110, threshold=2))
+img.paste(flat, (LEFT, TOP))
 y = TOP + lh + u(56)
 
 def tracked(draw, xy, text, font, fill, tracking):
