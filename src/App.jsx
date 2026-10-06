@@ -1640,7 +1640,7 @@ function HiringTimeline({ responses, filtered }) {
               <text
                 x={cardCX} y={yAvg}
                 fontSize="11.5" fill={B.darkTeal} textAnchor="middle"
-              >typically hire #{Math.round(avg)}</text>
+              >typically hire #{avg.toFixed(1)}</text>
             </g>
           );
         })}
