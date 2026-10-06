@@ -115,6 +115,12 @@ const PARTNERS = [
     url: "https://www.tryhellohire.com",
     blurb: "Helps home care agencies hire the best caregivers first. Using AI, automation, and built-in live video interviews, Hellohire instantly engages, screens, and schedules applicants so your team can meet top candidates before your competitors do.",
   },
+  {
+    name: "Phoebe",
+    logo: "/partners/phoebe.svg",
+    url: "https://www.phoebe.work",
+    blurb: "AI scheduling that covers home care shifts around the clock. When a caregiver calls out, Phoebe finds qualified replacements, reaches out by text and phone, assigns the shift in your EHR, and notifies the client — filling most open shifts in under 15 minutes so schedulers can focus on the work that needs a person.",
+  },
 ];
 const OFFICE_ROLES = ["Sales/marketing","Executive assistant/reception","Scheduling/care coordination","Billing","HR/Recruitment","Field supervisor"];
 
