@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { Fragment, useState, useEffect, useCallback, useRef } from "react";
 import * as d3 from "d3";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList } from "recharts";
 import sallysupportLogo from "./assets/sallysupport-logo.png";
@@ -3225,6 +3225,69 @@ function KeyFindingsEditor() {
 
 
 // ─── Admin panel ─────────────────────────────────────────────────
+// Every answer in one response, labelled by question. Q5–Q7 are all keyed by
+// role, so they share one table rather than three lists.
+function ResponseAnswers({ r }) {
+  const q5 = r.q5 || {}, q6 = r.q6 || {}, q7 = r.q7 || {};
+  const roles = [...new Set([...OFFICE_ROLES, ...Object.keys(q5), ...Object.keys(q6), ...Object.keys(q7)])]
+    .filter(role => q5[role] || (q6[role] && q6[role] !== "Not applicable") || q7[role]);
+  const dash = v => (v === undefined || v === null || v === "" ? "—" : v);
+  const rows = [
+    ["Email", r.q12Email ? `${r.q12Email} (${r.q12Consent ? "consented" : "no consent"})` : "—"],
+    ["Q1 · Location", dash(r.q1)],
+    ["Q2 · Billable hours / week", dash(r.q2)],
+    ["Q3 · Agency type", dash(r.q3)],
+    ["Q4 · Primary payer", dash(r.q4)],
+    ["Q8 · Time to first office hire", dash(r.q8)],
+    ["Q9 · Market", dash(r.q9)],
+    ["Q10 · Next intended hire", dash(r.q10)],
+    ["Q11 · Offshore / global remote talent",
+      r.q11 === "Yes" && r.q11Positions?.length ? `Yes: ${r.q11Positions.join(", ")}` : dash(r.q11)],
+    ["Q13 · Highest turnover role", dash(r.q13)],
+    ["Q14 · Heard about the survey", dash(r.q14)],
+  ];
+  const cell = {padding:"6px 10px",borderBottom:`1px solid ${B.gray200}`,textAlign:"left"};
+  return (
+    <div style={{borderTop:`1px solid ${B.gray200}`,paddingTop:16,fontSize:13,color:B.navy}}>
+      <dl style={{display:"grid",gridTemplateColumns:"minmax(150px,240px) 1fr",gap:"6px 16px",margin:"0 0 16px"}}>
+        {rows.map(([k,v])=>(
+          <Fragment key={k}>
+            <dt style={{color:B.gray400}}>{k}</dt>
+            <dd style={{margin:0,fontWeight:600,overflowWrap:"anywhere"}}>{v}</dd>
+          </Fragment>
+        ))}
+      </dl>
+      <div style={{color:B.gray400,marginBottom:6}}>Q5–Q7 · Office roles</div>
+      {roles.length === 0 ? (
+        <div style={{fontWeight:600}}>No office roles hired</div>
+      ) : (
+        <div style={{overflowX:"auto"}}>
+          <table style={{borderCollapse:"collapse",width:"100%",minWidth:420}}>
+            <thead>
+              <tr style={{color:B.gray600}}>
+                <th style={cell}>Role</th>
+                <th style={cell}>Q5 · Hire order</th>
+                <th style={cell}>Q6 · Arrangement</th>
+                <th style={cell}>Q7 · Headcount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {roles.map(role=>(
+                <tr key={role}>
+                  <td style={cell}>{role}{role===r.q5Other && !OFFICE_ROLES.includes(role) ? " (other)" : ""}</td>
+                  <td style={{...cell,fontWeight:600}}>{q5[role] || "—"}</td>
+                  <td style={{...cell,fontWeight:600}}>{dash(q6[role])}</td>
+                  <td style={{...cell,fontWeight:600}}>{dash(q7[role])}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function AdminLogin({ onAuth }) {
   const [pw,setPw] = useState(""); const [err,setErr] = useState("");
   function tryLogin() {
@@ -3373,17 +3436,7 @@ function AdminPanel() {
                 </div>
               </div>
             ) : (
-              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",
-                gap:12,fontSize:13}}>
-                <div><span style={{color:B.gray400}}>Location: </span><strong>{r.q1}</strong></div>
-                <div><span style={{color:B.gray400}}>Hours: </span><strong>{r.q2}</strong></div>
-                <div><span style={{color:B.gray400}}>Type: </span><strong>{r.q3}</strong></div>
-                <div><span style={{color:B.gray400}}>Payer: </span><strong>{r.q4}</strong></div>
-                <div><span style={{color:B.gray400}}>Roles hired: </span>
-                  <strong>{OFFICE_ROLES.filter(role=>r.q5[role]>0).length}</strong></div>
-                <div><span style={{color:B.gray400}}>Heard via: </span>
-                  <strong>{r.q14 || "—"}</strong></div>
-              </div>
+              <ResponseAnswers r={r} />
             )}
           </div>
         ))}
