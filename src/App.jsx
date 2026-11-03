@@ -133,28 +133,6 @@ const OFFICE_ROLES = ["Sales/marketing","Executive assistant/reception","Schedul
 // as the partner's name, so a later roster change never rewrites old responses.
 const REFERRAL_SOURCES = ["SallySupport", ...PARTNERS.map(p => p.name), "Other"];
 
-// Q12 takes work emails only. The database insert policy in
-// supabase/lockdown/2-lockdown.sql repeats this pattern and list, so a
-// submission that skips the form is held to the same rule. Keep them in step.
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PERSONAL_EMAIL_DOMAINS = [
-  "gmail.com","googlemail.com","yahoo.com","yahoo.ca","yahoo.co.uk","ymail.com","rocketmail.com",
-  "outlook.com","hotmail.com","hotmail.ca","hotmail.co.uk","live.com","live.ca","msn.com",
-  "icloud.com","me.com","mac.com","aol.com","gmx.com","gmx.net","mail.com",
-  "proton.me","protonmail.com","pm.me","zohomail.com","yandex.com","yandex.ru",
-  "comcast.net","att.net","sbcglobal.net","verizon.net","cox.net","charter.net",
-  "earthlink.net","bellsouth.net","shaw.ca","rogers.com","sympatico.ca",
-];
-
-// Null when the email is acceptable, otherwise the message to show.
-function emailProblem(email) {
-  const e = email.trim().toLowerCase();
-  if (!EMAIL_PATTERN.test(e)) return "Enter a full email address, like you@youragency.com.";
-  if (PERSONAL_EMAIL_DOMAINS.includes(e.split("@")[1]))
-    return "Please use your agency's work email. Personal addresses like Gmail or Outlook can't be accepted.";
-  return null;
-}
-
 // Category charts — anything whose slices are not office roles. Ordered so
 // navy and teal always lead, and so adjacent slices stay distinguishable.
 const CHART_PALETTE = ["#1A2B4A", "#2ABFAA", "#F4A623", "#6C7EAA", "#4A90C4", "#7ECFC3"];
@@ -739,27 +717,22 @@ function Q11({ value, onChange, positions, onPositions }) {
 
 // Q12 — Email + consent
 function Q12({ email, onEmail, consent, onConsent }) {
-  // Hold the message back until the address looks finished, so it doesn't
-  // flash on the first keystroke.
-  const problem = email.trim() && /@.+\./.test(email) ? emailProblem(email) : null;
   return (
     <>
       <QLabel>Stay updated on the results</QLabel>
       <QSub>
-        Enter your agency work email to receive updates as more agencies participate and the data evolves.
+        Enter your email to receive updates as more agencies participate and the data evolves.
         Your individual answers are kept strictly confidential — only aggregated, anonymous results are ever shared.
       </QSub>
       <input
         type="email"
         value={email}
         onChange={e=>onEmail(e.target.value)}
-        placeholder="you@youragency.com"
-        aria-invalid={!!problem}
+        placeholder="your@email.com"
         style={{width:"100%",padding:"13px 16px",fontSize:15,borderRadius:8,
-          border:`1.5px solid ${problem?"#C0392B":email&&email.includes("@")?B.navy:B.gray200}`,
-          marginBottom:problem?8:20,boxSizing:"border-box"}}
+          border:`1.5px solid ${email&&email.includes("@")?B.navy:B.gray200}`,
+          marginBottom:20,boxSizing:"border-box"}}
       />
-      {problem && <p role="alert" style={{fontSize:14,color:"#C0392B",margin:"0 0 20px"}}>{problem}</p>}
       <label style={{display:"flex",alignItems:"flex-start",gap:12,cursor:"pointer",
         padding:"14px 16px",borderRadius:8,
         border:`1.5px solid ${consent?B.navy:B.gray200}`,
@@ -861,7 +834,7 @@ function Survey({ onComplete }) {
     ()=>!!q11,
     ()=>!!q13,
     ()=>!!q14&&(q14!=="Other"||q14Other.trim()),
-    ()=>!emailProblem(q12Email),
+    ()=>!!q12Email&&q12Email.includes("@")&&q12Email.includes("."),
   ][step-1]?.();
 
   async function next() {
@@ -884,7 +857,7 @@ function Survey({ onComplete }) {
       q8, q9,
       q10: q10==="Other"?`Other: ${q10Other}`:q10,
       q11, q11Positions,
-      q12Email: q12Email.trim(), q12Consent,
+      q12Email, q12Consent,
       q13,
       q14: q14==="Other"?`Other: ${q14Other}`:q14,
     };
