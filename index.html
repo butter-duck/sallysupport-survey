@@ -30,20 +30,22 @@
       input, select, button, textarea { font-family: inherit; }
       .partner-fade { filter: grayscale(100%); opacity: .62; transition: filter .2s ease, opacity .2s ease; }
       .partner-link:hover .partner-fade { filter: none; opacity: 1; }
-      /* Seven partners need ~1040px to sit on one line. */
+      /* Nine partners are too wide for one line, and free wrapping strands a
+         logo alone on the last row, which reads as though it were singled
+         out. Pinning each item to a fixed share of the row forces balanced
+         rows: 5 + 4 on desktop, 3 + 3 + 3 below. justify-content keeps a short
+         trailing row centred, which a grid would not. Revisit the fractions
+         when the partner count changes. */
       .partner-strip { display: flex; flex-wrap: wrap; align-items: center;
-        justify-content: center; gap: 28px; max-width: 1100px; margin: 0 auto; }
-      /* Below that, free wrapping strands the seventh logo alone on a second
-         line, which reads as though it were singled out. Pinning each item to
-         a quarter of the row forces a balanced 4 + 3; justify-content keeps
-         the short trailing row centred, which a grid would not. */
+        justify-content: center; gap: 24px 28px; max-width: 1100px; margin: 0 auto; }
+      .partner-strip > a { flex: 0 0 calc(20% - 22.4px); }
       @media (max-width: 1120px) {
         .partner-strip { gap: 22px 16px; max-width: 620px; }
-        .partner-strip > a { flex: 0 0 calc(25% - 12px); }
+        .partner-strip > a { flex: 0 0 calc(33.333% - 10.667px); }
       }
       @media (max-width: 560px) {
         .partner-strip { gap: 18px 10px; }
-        .partner-strip > a { flex: 0 0 calc(25% - 7.5px); }
+        .partner-strip > a { flex: 0 0 calc(33.333% - 6.667px); }
       }
     </style>
   </head>

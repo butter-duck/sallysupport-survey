@@ -119,6 +119,12 @@ const PARTNERS = [
     url: "https://www.phoebe.work",
     blurb: "AI scheduling that covers home care shifts around the clock. When a caregiver calls out, Phoebe finds qualified replacements, reaches out by text and phone, assigns the shift in your EHR, and notifies the client — filling most open shifts in under 15 minutes so schedulers can focus on the work that needs a person.",
   },
+  {
+    name: "The Home Care CPAs",
+    logo: "/partners/home-care-cpas.png",
+    url: "https://thehomecarecpas.com",
+    blurb: "The Home Care CPAs is a woman-owned firm built around one deliberate choice: to serve a social impact industry. The people running home care agencies deserve financial partners who understand their world and show up with expertise, intention, and integrity.",
+  },
 ];
 const OFFICE_ROLES = ["Sales/marketing","Executive assistant/reception","Scheduling/care coordination","Billing","HR/Recruitment","Field supervisor"];
 
