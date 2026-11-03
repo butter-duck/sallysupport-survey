@@ -42,8 +42,6 @@ const B = {
 // target, so this can move without any copy changing.
 const UNLOCK_THRESHOLD = 50;
 
-const ADMIN_PASSWORD = "sallyadmin2025";
-
 // ─── Data constants ──────────────────────────────────────────────
 const US_STATES = [
   "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware",
@@ -135,6 +133,28 @@ const OFFICE_ROLES = ["Sales/marketing","Executive assistant/reception","Schedul
 // as the partner's name, so a later roster change never rewrites old responses.
 const REFERRAL_SOURCES = ["SallySupport", ...PARTNERS.map(p => p.name), "Other"];
 
+// Q12 takes work emails only. The database insert policy in
+// supabase/lockdown/2-lockdown.sql repeats this pattern and list, so a
+// submission that skips the form is held to the same rule. Keep them in step.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const PERSONAL_EMAIL_DOMAINS = [
+  "gmail.com","googlemail.com","yahoo.com","yahoo.ca","yahoo.co.uk","ymail.com","rocketmail.com",
+  "outlook.com","hotmail.com","hotmail.ca","hotmail.co.uk","live.com","live.ca","msn.com",
+  "icloud.com","me.com","mac.com","aol.com","gmx.com","gmx.net","mail.com",
+  "proton.me","protonmail.com","pm.me","zohomail.com","yandex.com","yandex.ru",
+  "comcast.net","att.net","sbcglobal.net","verizon.net","cox.net","charter.net",
+  "earthlink.net","bellsouth.net","shaw.ca","rogers.com","sympatico.ca",
+];
+
+// Null when the email is acceptable, otherwise the message to show.
+function emailProblem(email) {
+  const e = email.trim().toLowerCase();
+  if (!EMAIL_PATTERN.test(e)) return "Enter a full email address, like you@youragency.com.";
+  if (PERSONAL_EMAIL_DOMAINS.includes(e.split("@")[1]))
+    return "Please use your agency's work email. Personal addresses like Gmail or Outlook can't be accepted.";
+  return null;
+}
+
 // Category charts — anything whose slices are not office roles. Ordered so
 // navy and teal always lead, and so adjacent slices stay distinguishable.
 const CHART_PALETTE = ["#1A2B4A", "#2ABFAA", "#F4A623", "#6C7EAA", "#4A90C4", "#7ECFC3"];
@@ -194,6 +214,13 @@ async function sbFetch(path, options = {}) {
   return text ? JSON.parse(text) : [];
 }
 
+// The anon key can only insert responses, read settings, and call these
+// database functions (supabase/lockdown). Admin functions check the password
+// inside the database, so it never ships in this bundle.
+function sbRpc(name, args = {}) {
+  return sbFetch("/rest/v1/rpc/" + name, { method: "POST", body: JSON.stringify(args) });
+}
+
 async function loadSettings() {
   try {
     const rows = await sbFetch("/rest/v1/settings?key=eq.key_findings&select=value");
@@ -205,14 +232,9 @@ async function loadSettings() {
   }
 }
 
-async function saveSettings(key, value) {
+async function saveSettings(pw, key, value) {
   try {
-    await sbFetch("/rest/v1/settings", {
-      method: "POST",
-      prefer: "return=minimal,resolution=merge-duplicates",
-      headers: { "Prefer": "return=minimal,resolution=merge-duplicates" },
-      body: JSON.stringify({ key, value, updated_at: new Date().toISOString() }),
-    });
+    await sbRpc("admin_save_setting", { pw, setting_key: key, setting_value: value });
     return true;
   } catch(e) {
     console.error("saveSettings failed:", e.message);
@@ -230,7 +252,8 @@ async function loadResponses() {
     } catch { return []; }
   }
   try {
-    const rows = await sbFetch("/rest/v1/responses?select=id,data&order=data->>ts.asc");
+    // Every response minus contact details, oldest first.
+    const rows = await sbRpc("survey_responses");
     // Zero rows is a real answer, not a failure: it means no agency has
     // responded yet, and the report should say so. Only the catch below —
     // where the request itself failed — substitutes sample data.
@@ -268,23 +291,25 @@ async function addResponse(response) {
   }
 }
 
-async function updateResponse(response) {
-  try {
-    await sbFetch("/rest/v1/responses?id=eq." + response.id, {
-      method: "PATCH",
-      prefer: "return=minimal",
-      body: JSON.stringify({ data: response }),
-    });
-  } catch(e) { console.error("updateResponse:", e); }
+// Full responses, emails included. Throws on a wrong password, which is how
+// the admin login checks it.
+async function loadAdminResponses(pw) {
+  const rows = await sbRpc("admin_responses", { pw });
+  return rows.map(r => ({ id: r.id, ...r.data }));
 }
 
-async function deleteResponse(id) {
+async function updateResponse(pw, response) {
   try {
-    await sbFetch("/rest/v1/responses?id=eq." + id, {
-      method: "DELETE",
-      prefer: "return=minimal",
-    });
-  } catch(e) { console.error("deleteResponse:", e); }
+    await sbRpc("admin_update_response", { pw, response_id: response.id, new_data: response });
+    return true;
+  } catch(e) { console.error("updateResponse:", e); return false; }
+}
+
+async function deleteResponse(pw, id) {
+  try {
+    await sbRpc("admin_delete_response", { pw, response_id: id });
+    return true;
+  } catch(e) { console.error("deleteResponse:", e); return false; }
 }
 
 // An empty responses table used to be filled with DUMMY_SEED on load, which
@@ -714,22 +739,27 @@ function Q11({ value, onChange, positions, onPositions }) {
 
 // Q12 — Email + consent
 function Q12({ email, onEmail, consent, onConsent }) {
+  // Hold the message back until the address looks finished, so it doesn't
+  // flash on the first keystroke.
+  const problem = email.trim() && /@.+\./.test(email) ? emailProblem(email) : null;
   return (
     <>
       <QLabel>Stay updated on the results</QLabel>
       <QSub>
-        Enter your email to receive updates as more agencies participate and the data evolves.
+        Enter your agency work email to receive updates as more agencies participate and the data evolves.
         Your individual answers are kept strictly confidential — only aggregated, anonymous results are ever shared.
       </QSub>
       <input
         type="email"
         value={email}
         onChange={e=>onEmail(e.target.value)}
-        placeholder="your@email.com"
+        placeholder="you@youragency.com"
+        aria-invalid={!!problem}
         style={{width:"100%",padding:"13px 16px",fontSize:15,borderRadius:8,
-          border:`1.5px solid ${email&&email.includes("@")?B.navy:B.gray200}`,
-          marginBottom:20,boxSizing:"border-box"}}
+          border:`1.5px solid ${problem?"#C0392B":email&&email.includes("@")?B.navy:B.gray200}`,
+          marginBottom:problem?8:20,boxSizing:"border-box"}}
       />
+      {problem && <p role="alert" style={{fontSize:14,color:"#C0392B",margin:"0 0 20px"}}>{problem}</p>}
       <label style={{display:"flex",alignItems:"flex-start",gap:12,cursor:"pointer",
         padding:"14px 16px",borderRadius:8,
         border:`1.5px solid ${consent?B.navy:B.gray200}`,
@@ -831,7 +861,7 @@ function Survey({ onComplete }) {
     ()=>!!q11,
     ()=>!!q13,
     ()=>!!q14&&(q14!=="Other"||q14Other.trim()),
-    ()=>!!q12Email&&q12Email.includes("@")&&q12Email.includes("."),
+    ()=>!emailProblem(q12Email),
   ][step-1]?.();
 
   async function next() {
@@ -854,7 +884,7 @@ function Survey({ onComplete }) {
       q8, q9,
       q10: q10==="Other"?`Other: ${q10Other}`:q10,
       q11, q11Positions,
-      q12Email, q12Consent,
+      q12Email: q12Email.trim(), q12Consent,
       q13,
       q14: q14==="Other"?`Other: ${q14Other}`:q14,
     };
@@ -3147,7 +3177,7 @@ function StackedRolesChart({ responses, filters }) {
 
 
 // ─── Key findings editor ──────────────────────────────────────────
-function KeyFindingsEditor() {
+function KeyFindingsEditor({ pw }) {
   const [findings, setFindings] = useState(["","","","",""]);
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -3165,14 +3195,15 @@ function KeyFindingsEditor() {
   async function save() {
     setStatus("saving");
     const toSave = findings.map(f => f.trim()).filter(Boolean);
-    const ok = await saveSettings("key_findings", toSave.length > 0 ? toSave : []);
+    const ok = await saveSettings(pw, "key_findings", toSave.length > 0 ? toSave : []);
     setStatus(ok ? "saved" : "error");
     setTimeout(() => setStatus(null), 3000);
   }
 
   async function reset() {
     if (!confirm("Reset to auto-generated findings?")) return;
-    await saveSettings("key_findings", []);
+    const ok = await saveSettings(pw, "key_findings", []);
+    if (!ok) { setStatus("error"); setTimeout(() => setStatus(null), 3000); return; }
     setFindings(["","","","",""]);
     setStatus("reset");
     setTimeout(() => setStatus(null), 3000);
@@ -3296,9 +3327,19 @@ function ResponseAnswers({ r }) {
 
 function AdminLogin({ onAuth }) {
   const [pw,setPw] = useState(""); const [err,setErr] = useState("");
-  function tryLogin() {
-    if(pw===ADMIN_PASSWORD) onAuth();
-    else setErr("Incorrect password.");
+  const [busy,setBusy] = useState(false);
+  async function tryLogin() {
+    if(busy || !pw) return;
+    setBusy(true);
+    try {
+      const rows = await loadAdminResponses(pw);
+      onAuth(pw, rows);
+    } catch(e) {
+      setErr(/invalid admin password/.test(e.message)
+        ? "Incorrect password."
+        : "Couldn't reach the database. Try again.");
+      setBusy(false);
+    }
   }
   return (
     <div style={{minHeight:"100vh",background:B.gray50}}>
@@ -3312,32 +3353,28 @@ function AdminLogin({ onAuth }) {
           style={{width:"100%",padding:"12px 16px",fontSize:15,borderRadius:8,
             border:`1.5px solid ${B.gray200}`,marginBottom:12,boxSizing:"border-box"}} />
         {err && <p style={{fontSize:14,color:"#C0392B",marginBottom:12}}>{err}</p>}
-        <Btn onClick={tryLogin} style={{width:"100%"}}>Sign in</Btn>
+        <Btn onClick={tryLogin} style={{width:"100%"}}>{busy ? "Checking…" : "Sign in"}</Btn>
       </div>
     </div>
   );
 }
 
 function AdminPanel() {
-  const [authed,setAuthed] = useState(false);
+  // The password is held only in memory for this visit; every admin call
+  // sends it to the database to be checked.
+  const [pw,setPw] = useState(null);
   const [responses,setResponses] = useState([]);
   const [editing,setEditing] = useState(null);
   const [editData,setEditData] = useState(null);
 
-  useEffect(()=>{
-    if(authed) {
-      loadResponses().then(setResponses);
-    }
-  },[authed]);
-
   async function del(id) {
     if(!confirm("Delete this response?")) return;
-    await deleteResponse(id);
+    if(!(await deleteResponse(pw, id))) { alert("Delete failed. Nothing was removed."); return; }
     setResponses(responses.filter(r=>r.id!==id));
   }
   function startEdit(r) { setEditing(r.id); setEditData({...r,q5:{...r.q5},q6:{...r.q6}}); }
   async function saveEdit() {
-    await updateResponse(editData);
+    if(!(await updateResponse(pw, editData))) { alert("Save failed. The response was not changed."); return; }
     setResponses(responses.map(r=>r.id===editing?editData:r));
     setEditing(null);
   }
@@ -3347,14 +3384,14 @@ function AdminPanel() {
     a.download = "sallysupport_responses.json"; a.click();
   }
 
-  if(!authed) return <AdminLogin onAuth={()=>setAuthed(true)} />;
+  if(!pw) return <AdminLogin onAuth={(p, rows)=>{ setResponses(rows); setPw(p); }} />;
 
   return (
     <div style={{minHeight:"100vh",background:B.gray50}}>
       <Header right={
         <div style={{display:"flex",gap:10}}>
           <Btn small secondary onClick={exportJSON}>Export JSON</Btn>
-          <Btn small secondary onClick={()=>setAuthed(false)}>Sign out</Btn>
+          <Btn small secondary onClick={()=>{ setPw(null); setResponses([]); }}>Sign out</Btn>
         </div>
       }/>
       <div style={{maxWidth:1100,margin:"0 auto",padding:"32px 20px"}}>
@@ -3364,7 +3401,7 @@ function AdminPanel() {
           You can view, edit, or delete any entry.
         </p>
 
-        <KeyFindingsEditor />
+        <KeyFindingsEditor pw={pw} />
 
         {responses.length===0 && (
           <div style={{textAlign:"center",padding:60,color:B.gray400}}>No responses yet.</div>
