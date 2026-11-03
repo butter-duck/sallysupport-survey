@@ -42,6 +42,8 @@ const B = {
 // target, so this can move without any copy changing.
 const UNLOCK_THRESHOLD = 50;
 
+const ADMIN_PASSWORD = "sallyadmin2025";
+
 // ─── Data constants ──────────────────────────────────────────────
 const US_STATES = [
   "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware",
@@ -192,13 +194,6 @@ async function sbFetch(path, options = {}) {
   return text ? JSON.parse(text) : [];
 }
 
-// The anon key can only insert responses, read settings, and call these
-// database functions (supabase/lockdown). Admin functions check the password
-// inside the database, so it never ships in this bundle.
-function sbRpc(name, args = {}) {
-  return sbFetch("/rest/v1/rpc/" + name, { method: "POST", body: JSON.stringify(args) });
-}
-
 async function loadSettings() {
   try {
     const rows = await sbFetch("/rest/v1/settings?key=eq.key_findings&select=value");
@@ -210,9 +205,14 @@ async function loadSettings() {
   }
 }
 
-async function saveSettings(pw, key, value) {
+async function saveSettings(key, value) {
   try {
-    await sbRpc("admin_save_setting", { pw, setting_key: key, setting_value: value });
+    await sbFetch("/rest/v1/settings", {
+      method: "POST",
+      prefer: "return=minimal,resolution=merge-duplicates",
+      headers: { "Prefer": "return=minimal,resolution=merge-duplicates" },
+      body: JSON.stringify({ key, value, updated_at: new Date().toISOString() }),
+    });
     return true;
   } catch(e) {
     console.error("saveSettings failed:", e.message);
@@ -230,8 +230,7 @@ async function loadResponses() {
     } catch { return []; }
   }
   try {
-    // Every response minus contact details, oldest first.
-    const rows = await sbRpc("survey_responses");
+    const rows = await sbFetch("/rest/v1/responses?select=id,data&order=data->>ts.asc");
     // Zero rows is a real answer, not a failure: it means no agency has
     // responded yet, and the report should say so. Only the catch below —
     // where the request itself failed — substitutes sample data.
@@ -269,25 +268,23 @@ async function addResponse(response) {
   }
 }
 
-// Full responses, emails included. Throws on a wrong password, which is how
-// the admin login checks it.
-async function loadAdminResponses(pw) {
-  const rows = await sbRpc("admin_responses", { pw });
-  return rows.map(r => ({ id: r.id, ...r.data }));
+async function updateResponse(response) {
+  try {
+    await sbFetch("/rest/v1/responses?id=eq." + response.id, {
+      method: "PATCH",
+      prefer: "return=minimal",
+      body: JSON.stringify({ data: response }),
+    });
+  } catch(e) { console.error("updateResponse:", e); }
 }
 
-async function updateResponse(pw, response) {
+async function deleteResponse(id) {
   try {
-    await sbRpc("admin_update_response", { pw, response_id: response.id, new_data: response });
-    return true;
-  } catch(e) { console.error("updateResponse:", e); return false; }
-}
-
-async function deleteResponse(pw, id) {
-  try {
-    await sbRpc("admin_delete_response", { pw, response_id: id });
-    return true;
-  } catch(e) { console.error("deleteResponse:", e); return false; }
+    await sbFetch("/rest/v1/responses?id=eq." + id, {
+      method: "DELETE",
+      prefer: "return=minimal",
+    });
+  } catch(e) { console.error("deleteResponse:", e); }
 }
 
 // An empty responses table used to be filled with DUMMY_SEED on load, which
@@ -3150,7 +3147,7 @@ function StackedRolesChart({ responses, filters }) {
 
 
 // ─── Key findings editor ──────────────────────────────────────────
-function KeyFindingsEditor({ pw }) {
+function KeyFindingsEditor() {
   const [findings, setFindings] = useState(["","","","",""]);
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -3168,15 +3165,14 @@ function KeyFindingsEditor({ pw }) {
   async function save() {
     setStatus("saving");
     const toSave = findings.map(f => f.trim()).filter(Boolean);
-    const ok = await saveSettings(pw, "key_findings", toSave.length > 0 ? toSave : []);
+    const ok = await saveSettings("key_findings", toSave.length > 0 ? toSave : []);
     setStatus(ok ? "saved" : "error");
     setTimeout(() => setStatus(null), 3000);
   }
 
   async function reset() {
     if (!confirm("Reset to auto-generated findings?")) return;
-    const ok = await saveSettings(pw, "key_findings", []);
-    if (!ok) { setStatus("error"); setTimeout(() => setStatus(null), 3000); return; }
+    await saveSettings("key_findings", []);
     setFindings(["","","","",""]);
     setStatus("reset");
     setTimeout(() => setStatus(null), 3000);
@@ -3300,19 +3296,9 @@ function ResponseAnswers({ r }) {
 
 function AdminLogin({ onAuth }) {
   const [pw,setPw] = useState(""); const [err,setErr] = useState("");
-  const [busy,setBusy] = useState(false);
-  async function tryLogin() {
-    if(busy || !pw) return;
-    setBusy(true);
-    try {
-      const rows = await loadAdminResponses(pw);
-      onAuth(pw, rows);
-    } catch(e) {
-      setErr(/invalid admin password/.test(e.message)
-        ? "Incorrect password."
-        : "Couldn't reach the database. Try again.");
-      setBusy(false);
-    }
+  function tryLogin() {
+    if(pw===ADMIN_PASSWORD) onAuth();
+    else setErr("Incorrect password.");
   }
   return (
     <div style={{minHeight:"100vh",background:B.gray50}}>
@@ -3326,28 +3312,32 @@ function AdminLogin({ onAuth }) {
           style={{width:"100%",padding:"12px 16px",fontSize:15,borderRadius:8,
             border:`1.5px solid ${B.gray200}`,marginBottom:12,boxSizing:"border-box"}} />
         {err && <p style={{fontSize:14,color:"#C0392B",marginBottom:12}}>{err}</p>}
-        <Btn onClick={tryLogin} style={{width:"100%"}}>{busy ? "Checking…" : "Sign in"}</Btn>
+        <Btn onClick={tryLogin} style={{width:"100%"}}>Sign in</Btn>
       </div>
     </div>
   );
 }
 
 function AdminPanel() {
-  // The password is held only in memory for this visit; every admin call
-  // sends it to the database to be checked.
-  const [pw,setPw] = useState(null);
+  const [authed,setAuthed] = useState(false);
   const [responses,setResponses] = useState([]);
   const [editing,setEditing] = useState(null);
   const [editData,setEditData] = useState(null);
 
+  useEffect(()=>{
+    if(authed) {
+      loadResponses().then(setResponses);
+    }
+  },[authed]);
+
   async function del(id) {
     if(!confirm("Delete this response?")) return;
-    if(!(await deleteResponse(pw, id))) { alert("Delete failed. Nothing was removed."); return; }
+    await deleteResponse(id);
     setResponses(responses.filter(r=>r.id!==id));
   }
   function startEdit(r) { setEditing(r.id); setEditData({...r,q5:{...r.q5},q6:{...r.q6}}); }
   async function saveEdit() {
-    if(!(await updateResponse(pw, editData))) { alert("Save failed. The response was not changed."); return; }
+    await updateResponse(editData);
     setResponses(responses.map(r=>r.id===editing?editData:r));
     setEditing(null);
   }
@@ -3357,14 +3347,14 @@ function AdminPanel() {
     a.download = "sallysupport_responses.json"; a.click();
   }
 
-  if(!pw) return <AdminLogin onAuth={(p, rows)=>{ setResponses(rows); setPw(p); }} />;
+  if(!authed) return <AdminLogin onAuth={()=>setAuthed(true)} />;
 
   return (
     <div style={{minHeight:"100vh",background:B.gray50}}>
       <Header right={
         <div style={{display:"flex",gap:10}}>
           <Btn small secondary onClick={exportJSON}>Export JSON</Btn>
-          <Btn small secondary onClick={()=>{ setPw(null); setResponses([]); }}>Sign out</Btn>
+          <Btn small secondary onClick={()=>setAuthed(false)}>Sign out</Btn>
         </div>
       }/>
       <div style={{maxWidth:1100,margin:"0 auto",padding:"32px 20px"}}>
@@ -3374,7 +3364,7 @@ function AdminPanel() {
           You can view, edit, or delete any entry.
         </p>
 
-        <KeyFindingsEditor pw={pw} />
+        <KeyFindingsEditor />
 
         {responses.length===0 && (
           <div style={{textAlign:"center",padding:60,color:B.gray400}}>No responses yet.</div>
