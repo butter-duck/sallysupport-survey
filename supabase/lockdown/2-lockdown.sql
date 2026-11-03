@@ -7,6 +7,20 @@
 --   * read the settings table (key findings shown on the dashboard)
 --   * call the functions from step 1
 -- and nothing else: no reading, editing or deleting responses directly.
+--
+-- All or nothing: if any statement fails, none of it applies. A half-run
+-- script could leave responses with RLS on and no insert policy, which
+-- silently drops every new submission.
+
+begin;
+
+-- The dashboard's key findings. The app has always read and written this
+-- table, but it was never created, so saves from the admin panel failed.
+create table if not exists public.settings (
+  key        text primary key,
+  value      jsonb not null,
+  updated_at timestamptz not null default now()
+);
 
 alter table public.responses enable row level security;
 alter table public.settings  enable row level security;
@@ -49,3 +63,5 @@ revoke all on public.responses from anon, authenticated;
 revoke all on public.settings  from anon, authenticated;
 grant insert on public.responses to anon, authenticated;
 grant select on public.settings  to anon, authenticated;
+
+commit;
