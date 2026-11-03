@@ -3,7 +3,7 @@
 -- data and breaks the admin panel until the new code deploys.
 --
 -- Afterwards the anon key (the one in the public JS bundle) can:
---   * insert new survey responses
+--   * insert new survey responses, only with a work email
 --   * read the settings table (key findings shown on the dashboard)
 --   * call the functions from step 1
 -- and nothing else: no reading, editing or deleting responses directly.
@@ -24,9 +24,22 @@ begin
 end
 $$;
 
-create policy "anyone can submit a response"
+-- Work emails only. The pattern and domain list repeat EMAIL_PATTERN and
+-- PERSONAL_EMAIL_DOMAINS in src/App.jsx; keep the two in step, or the form
+-- will accept answers the database then refuses.
+create policy "anyone can submit a response with a work email"
   on public.responses for insert to anon, authenticated
-  with check (true);
+  with check (
+    lower(btrim(data->>'q12Email')) ~ '^[^\s@]+@[^\s@]+\.[^\s@]{2,}$'
+    and split_part(lower(btrim(data->>'q12Email')), '@', 2) <> all (array[
+      'gmail.com','googlemail.com','yahoo.com','yahoo.ca','yahoo.co.uk','ymail.com','rocketmail.com',
+      'outlook.com','hotmail.com','hotmail.ca','hotmail.co.uk','live.com','live.ca','msn.com',
+      'icloud.com','me.com','mac.com','aol.com','gmx.com','gmx.net','mail.com',
+      'proton.me','protonmail.com','pm.me','zohomail.com','yandex.com','yandex.ru',
+      'comcast.net','att.net','sbcglobal.net','verizon.net','cox.net','charter.net',
+      'earthlink.net','bellsouth.net','shaw.ca','rogers.com','sympatico.ca'
+    ])
+  );
 
 create policy "anyone can read settings"
   on public.settings for select to anon, authenticated
